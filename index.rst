@@ -20,7 +20,12 @@ The NGL database is populated through a web GUI at www.nextgenerationliquefactio
 provides limited capabilities for users to interact with data. Users are able to view and download data, 
 but they cannot use the GUI to develop an end-to-end workflow to make scientific inferences and draw conclusions 
 from the data. To facilitate end-to-end workflows, the NGL database is replicated daily to `DesignSafe <https://www.designsafe-ci.org>`_, where 
-users can interact with it using Jupyter notebooks. 
+users can interact with it using Jupyter notebooks.
+
+Links
+_____
+`https://www.designsafe-ci.org <https://www.designsafe-ci.org>`_
+`https://www.nextgenerationliquefaction.org <https://www.nextgenerationliquefaction.org>`_
 
 .. toctree::
    :caption: Background Info
