@@ -20,4 +20,5 @@ the NGL database. The SITE_ID field is not contiguous because sites are sometime
 SITE_ID field is never re-used. The Pandas dataframe is broken between SITE_ID 151 and 677 for ease of displaying 
 information in the output window. Many rows of data are not displayed in Figure 2 as a result.
 
-<img src="SiteTableQuery.png" alt="Screenshot of results from site table query">
+![](SiteTableQuery.png)
+<strong>Figure 2.</strong> Results of query of SITE table data.
