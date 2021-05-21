@@ -10,7 +10,7 @@ substantially larger, more consistent, and more reliable source of liquefaction 
 Based on this database, we will create probabilistic models that provide hazard- and risk-consistent bases 
 for assessing liquefaction susceptibility, the potential for liquefaction to be triggered in susceptible soils, 
 and the likely consequences. NGL is committed to an open and objective evaluation and integration of data, 
-models and methods, as recommended in a 2016 National Academies 'report <https://www.nap.edu/catalog/23474/state-of-the-art-and-practice-in-the-assessment-of-earthquake-induced-soil-liquefaction-and-its-consequences>'. 
+models and methods, as recommended in a 2016 National Academies `report <https://www.nap.edu/catalog/23474/state-of-the-art-and-practice-in-the-assessment-of-earthquake-induced-soil-liquefaction-and-its-consequences>`_. 
 The evaluation and integration of the data into new models and methods will be clear and transparent. Following these principles will ensure 
 that the resulting liquefaction susceptibility, triggering, and consequence models are reliable, robust and 
 vetted by the scientific community, providing a solid foundation for designing, constructing and overseeing 
@@ -19,7 +19,7 @@ critical infrastructure projects.
 The NGL database is populated through a web GUI at www.nextgenerationliquefaction.org/. The web interface 
 provides limited capabilities for users to interact with data. Users are able to view and download data, 
 but they cannot use the GUI to develop an end-to-end workflow to make scientific inferences and draw conclusions 
-from the data. To facilitate end-to-end workflows, the NGL database is replicated daily to 'DesignSafe <https://www.designsafe-ci.org>', where 
+from the data. To facilitate end-to-end workflows, the NGL database is replicated daily to `DesignSafe <https://www.designsafe-ci.org>`_, where 
 users can interact with it using Jupyter notebooks. 
 
 .. toctree::
