@@ -1,4 +1,4 @@
-## Query Site Table Using Pandas
+## Query site table using pandas
 
 An easy way to query the database is to use the Pandas read_sql command, which queries data and returns a Pandas dataframe. 
 The commands below imports the Pandas and ngl_db packages, creates a connection object to ngl_db called cnx, creates a 
