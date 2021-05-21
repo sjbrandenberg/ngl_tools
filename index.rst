@@ -21,22 +21,7 @@ The NGL database is populated through a web GUI at www.nextgenerationliquefactio
 provides limited capabilities for users to interact with data. Users are able to view and download data, 
 but they cannot use the GUI to develop an end-to-end workflow to make scientific inferences and draw conclusions 
 from the data. To facilitate end-to-end workflows, the NGL database is replicated daily to .. _DesignSafe: https://www.designsafe-ci.org/, where 
-users can interact with it using Jupyter notebooks. NGL Jupyter notebooks are published as projects accessible in
-DesignSafe via the following DOI's:
-
-https://doi.org/10.17603/ds2-xvp9-ag60 Sample Queries
-
-https://doi.org/10.17603/ds2-99kp-rw11 Cone Penetration Test Viewer
-
-https://doi.org/10.17603/ds2-cmn0-h864 Surface Wave Viewer
-
-https://doi.org/10.17603/ds2-tq39-kp49 Invasive Geophysical Test Viewer
-
-https://doi.org/10.17603/ds2-sj7t-av93 Boring Log Viewer
-
-https://doi.org/10.17603/ds2-2xzy-1y96 Partner Dataset Overview
-
-
+users can interact with it using Jupyter notebooks. 
 
 Packages
 ________
@@ -45,5 +30,6 @@ ________
    :maxdepth: 1
    
    connect_to_database
+   published_notebooks
    understanding_schema
    site_table_query
