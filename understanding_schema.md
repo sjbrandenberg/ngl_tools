@@ -4,7 +4,7 @@ The NGL database is organized into tables that are related to each other via key
 you will need to understand the organizational structure of the database, called the schema. The database 
 schema is documented at the following URL:
 
-https://nextgenerationliquefaction.org/schema/index.html
+[https://nextgenerationliquefaction.org/schema/index.html](https://nextgenerationliquefaction.org/schema/index.html)
 
 Figure 1 describes the schema for the SITE table, which is a high level table in the NGL database where 
 users enter information about a particular site they have investigated following an earthquake. The SITE 
