@@ -22,12 +22,14 @@ but they cannot use the GUI to develop an end-to-end workflow to make scientific
 from the data. To facilitate end-to-end workflows, the NGL database is replicated daily to `DesignSafe <https://www.designsafe-ci.org>`_, where 
 users can interact with it using Jupyter notebooks.
 
-Links
-_____
+External Links
+______________
 `https://www.designsafe-ci.org <https://www.designsafe-ci.org>`_
 
 `https://www.nextgenerationliquefaction.org <https://www.nextgenerationliquefaction.org>`_
 
+Table of Contents
+_________________
 .. toctree::
    :caption: Background Info
    :maxdepth: 1
