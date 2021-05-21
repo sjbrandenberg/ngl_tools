@@ -25,6 +25,7 @@ users can interact with it using Jupyter notebooks.
 Links
 _____
 `https://www.designsafe-ci.org <https://www.designsafe-ci.org>`_
+
 `https://www.nextgenerationliquefaction.org <https://www.nextgenerationliquefaction.org>`_
 
 .. toctree::
