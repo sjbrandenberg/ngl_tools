@@ -27,9 +27,8 @@ Background Info
 _______________
 
 .. toctree::
-   :caption: Background Info
-   :maxdepth: 1
    
+   Background
    connect_to_database
    published_notebooks
    understanding_schema
