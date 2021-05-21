@@ -45,3 +45,4 @@ ________
    :maxdepth: 1
    
    connect_to_database
+   understanding_schema
