@@ -28,8 +28,7 @@ ______________
 
 `https://www.nextgenerationliquefaction.org <https://www.nextgenerationliquefaction.org>`_
 
-Table of Contents
-_________________
+
 .. toctree::
    :caption: Background Info
    :maxdepth: 1
