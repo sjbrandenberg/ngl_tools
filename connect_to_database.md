@@ -1,4 +1,4 @@
-## Connecting To Database
+## Connecting to the database in DesignSafe
 
 Connecting to a relational database requires credentials, like username, password, database name, and hostname. 
 Rather than requiring users to know these credentials, we have created a Python package that allows users to 
