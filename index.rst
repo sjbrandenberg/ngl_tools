@@ -23,8 +23,8 @@ but they cannot use the GUI to develop an end-to-end workflow to make scientific
 from the data. To facilitate end-to-end workflows, the NGL database is replicated daily to .. _DesignSafe: https://www.designsafe-ci.org/, where 
 users can interact with it using Jupyter notebooks. 
 
-Packages
-________
+Background Info
+_______________
 
 .. toctree::
    :maxdepth: 1
@@ -32,4 +32,11 @@ ________
    connect_to_database
    published_notebooks
    understanding_schema
+   
+Example Queries
+_______________
+
+.. toctree::
+   :maxdepth: 1
+   
    site_table_query
