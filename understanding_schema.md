@@ -15,5 +15,5 @@ database that have been assigned a foreign key constraint to the SITE_ID field. 
 containing field observations of liquefaction at a site. The FLDO table has a SITE_ID field, called a foreign 
 key, that identifies the observation as being associated with the site with the same SITE_ID.
 
-<img src="SiteSchema.png" alt="Screenshot of site table schema">
+<img src="https://github.com/sjbrandenberg/ngl_tools/blob/master/SiteSchema.png" alt="Screenshot of site table schema">
 <strong>Figure 1.</strong> Screenshot of NGL site table schema.
