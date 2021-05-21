@@ -27,6 +27,7 @@ Background Info
 _______________
 
 .. toctree::
+   :caption: Background Info
    :maxdepth: 1
    
    connect_to_database
@@ -37,6 +38,7 @@ Example Queries
 _______________
 
 .. toctree::
+   :caption: Example Queries
    :maxdepth: 1
    
    site_table_query
