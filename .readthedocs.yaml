@@ -6,4 +6,7 @@ version: 2
 sphinx:
   configuration: conf.py
 
-sphinx_markdown_tables:
+python:
+  version: 3.7
+  install:
+  - requirements: requirements.txt
