@@ -57,7 +57,8 @@ Descriptions of the fields in each table utilized in the queries herein are prov
 | SCPT_FRES | Sleeve friction resistance (fs) in MPa |
 | SCPT_PWP | Pore-water pressure in MPa |
 
-### Import packages
+### Code
+#### Import packages
 In this case, we need to import ipywidgets, matplotlib, numpy, ngl_db, and pandas. The "%matplotlib notebook" magic renders an interactive plot in the notebook.
 ```python
 %matplotlib notebook
@@ -68,12 +69,12 @@ import ngl_db
 import pandas as pd
 ```
 
-### Connect to database
+#### Connect to database
 ```python
 cnx = ngl_db.connect()
 ```
 
-### Query distinct SITE_ID and SITE_NAME for sites that have CPT data
+#### Query distinct SITE_ID and SITE_NAME for sites that have CPT data
 The query below finds distinct SITE_ID and SITE_NAME fields that contain CPT data for the purpose of populating the site dropdown widget. 
 INNER JOIN commands are required between SITE, TEST, and SCPG to find sites containing CPT data.
 A site might contain more than one CPT test, but we do not want replicated fields in the site dropdown widget. Therefore we use the "DISTINCT" command.
@@ -82,7 +83,7 @@ sql = 'SELECT DISTINCT SITE.SITE_ID, SITE.SITE_NAME FROM SITE INNER JOIN TEST ON
 site_df = pd.read_sql_query(sql, cnx)
 ```
 
-### Create key, value pairs for SITE_NAME and SITE_ID, and create site_widget
+#### Create key, value pairs for SITE_NAME and SITE_ID, and create site_widget
 Dropdown widgets accept key-value pairs for the "options" field. The code below converts queried site data into name, value pairs.
 ```python
 site_df.set_index('SITE_ID',inplace=True)
@@ -92,14 +93,14 @@ for key, value in site_df['SITE_NAME'].to_dict().items():
     site_options.append((value, key))
 site_widget = widgets.Dropdown(options=site_options, description='Site')
 ```
-### Create empty test_widget. This widget will get populated when a site is selected.
+#### Create empty test_widget. This widget will get populated when a site is selected.
 ```python
 test_options = [('Select a test', -1)]
 test_widget = widgets.Dropdown(options=test_options, description='Test', disabled=True)
 widget_box= widgets.VBox([site_widget, test_widget])
 display(widget_box)
 ```
-### Create plot objects and initialize empty plots
+#### Create plot objects and initialize empty plots
 ```python
 fig, ax = plt.subplots(1, 3, figsize=(6,4), sharey='row')
 
@@ -121,12 +122,12 @@ ax[2].invert_yaxis()
 
 fig.tight_layout()
 ```
-### Create empty metadata_widget. This widget will get populated when a CPT test is selected.
+#### Create empty metadata_widget. This widget will get populated when a CPT test is selected.
 ```python
 metadata_widget = widgets.HTML(value='')
 display(metadata_widget)
 ```
-### Define function for populating test_widget when a user selects a site from the site_widget dropdown
+#### Define function for populating test_widget when a user selects a site from the site_widget dropdown
 This code sets data for the plots to be empty, and sets the metadata widget to be empty as well. If the top-level field is selected (i.e., 'Select a Test'), then the test_widget is disabled.
 If a site is selected, a SQL query is made on all of the CPT tests for that site, and the test dropdown is populated.
 ```python
@@ -152,7 +153,7 @@ def on_site_widget_change(change):
         test_widget.options = test_options
         test_widget.disabled = False
 ```
-### Define function for querying CPT data and metadata when a user selects a CPT test
+#### Define function for querying CPT data and metadata when a user selects a CPT test
 ```python
 def on_test_widget_change(change):
     if(change['new']!=-1):
@@ -190,7 +191,7 @@ def on_test_widget_change(change):
         line3.set_ydata([])
         metadata_widget.value=''
 ```
-### Use the ipywidgets 'observe' command to link widgets to appropriate functions on change
+#### Use the ipywidgets 'observe' command to link widgets to appropriate functions on change
 ```python
 site_widget.observe(on_site_widget_change, names='value')
 test_widget.observe(on_test_widget_change, names='value')
