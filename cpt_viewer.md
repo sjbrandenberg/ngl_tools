@@ -1,4 +1,4 @@
-# Cone penetration test viewer
+## Cone penetration test viewer
 
 The cone penetration test viewer demonstrates the following:
 
@@ -10,7 +10,7 @@ The cone penetration test viewer demonstrates the following:
 
 Cone penetration test data plotted in the notebook include tip resistance, sleeve friction, and pore pressure. In some cases, sleeve friction and pore pressure are not measured, in which case the plots are empty.
 
-## Tables
+### Tables
 Tables queried in this notebook are described in the table below.
 | Table | Description |
 | :--- | :--- |
@@ -20,20 +20,20 @@ Tables queried in this notebook are described in the table below.
 | SCPT | Table containing CPT test data |
 
 Descriptions of the fields in each table utilized in the queries herein are provided in the tables below.
-### SITE Table
+#### SITE Table
 | Field | Description |
 | :--- | :--- |
 | SITE_ID | Primary key for the site table |
 | SITE_NAME | Site name (appears in site_widget dropdown) |
 
-### TEST Table
+#### TEST Table
 | Field | Description |
 | :--- | :--- |
 | TEST_ID | Primary key for TEST table |
 | SITE_ID | Foreign key from SITE table associating a test with a site |
 | TEST_NAME | Test name (appears in test_widget dropdown) |
 
-### SCPG Table
+#### SCPG Table
 | Field | Description |
 | :--- | :--- |
 | SCPG_ID | Primary key for SCPG table |
@@ -47,7 +47,7 @@ Descriptions of the fields in each table utilized in the queries herein are prov
 | SCPG_PWP | Position of pore pressure measurement on cone |
 | SCPG_REM | Remarks |
 
-### SCPT Table
+#### SCPT Table
 | Field | Description |
 | :--- | :--- |
 | SCPT_ID | Primary key for SCPT Table |
@@ -57,7 +57,7 @@ Descriptions of the fields in each table utilized in the queries herein are prov
 | SCPT_FRES | Sleeve friction resistance (fs) in MPa |
 | SCPT_PWP | Pore-water pressure in MPa |
 
-## Import packages
+### Import packages
 In this case, we need to import ipywidgets, matplotlib, numpy, ngl_db, and pandas. The "%matplotlib notebook" magic renders an interactive plot in the notebook.
 ```python
 %matplotlib notebook
@@ -68,7 +68,7 @@ import ngl_db
 import pandas as pd
 ```
 
-## Connect to database
+### Connect to database
 ```python
 cnx = ngl_db.connect()
 ```
