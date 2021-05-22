@@ -43,3 +43,9 @@ ______________
    :maxdepth: 1
    
    site_table_query
+
+.. toctree::
+   :caption: Data Viewers
+   :maxdepth: 1
+   
+   cpt_viewer
