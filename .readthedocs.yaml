@@ -1,0 +1,9 @@
+# File: .readthedocs.yaml
+
+version: 2
+
+# Build from the docs/ directory with Sphinx
+sphinx:
+  configuration: conf.py
+
+sphinx_markdown_tables:
