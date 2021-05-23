@@ -221,7 +221,7 @@ This query builds upon the previous query by adding an indication of whether the
   df2 = pd.DataFrame({'Quantity': quantities, 'Total': total, 'Reviewed': reviewed})
   df2
   
-  .. figure:: images/Counts2.png
+.. figure:: images/Counts2.png
     :alt: Screenshot of counts of data quantities in various tables, plus indication of review status.
 
     **Figure 6.** Screenshot of counts of data quantities in various tables, plus indication of review status.
