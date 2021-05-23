@@ -2,7 +2,7 @@
 Example Queries
 ===============
 
-This document demonstrates how to query the NGL database using DesignSafe. The queries begin simple and become progressively more complicated.
+This document demonstrates how to query the NGL database using DesignSafe. The queries begin simple and become progressively more complicated. Screenshots of output from the queries indicate the status of the database at the time the figure was generated, and will therefore not necessarily match the results of queries performed on the database in its current state.
 
 ----------------
 Jupyter Notebook
