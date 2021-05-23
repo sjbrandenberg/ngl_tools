@@ -7,7 +7,7 @@ This document demonstrates how to query the NGL database using DesignSafe. The q
 ----------------
 Jupyter Notebook
 ----------------
-`Jupyter Notebook in DesignSafe <https://jupyter.designsafe-ci.org/user/name/tree/CommunityData/NGL/ExampleQueries.ipynb target="_blank">`_
+`Jupyter Notebook in DesignSafe <https://jupyter.designsafe-ci.org/user/name/tree/CommunityData/NGL/ExampleQueries.ipynb>`_
 
 -----------------------------
 Query site table using pandas
