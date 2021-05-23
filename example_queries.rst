@@ -244,7 +244,7 @@ The cell below queries the names of all of the tables in the NGL database into a
   pd.set_option('display.max_rows', len(table_names))
   table_names
   
-.. figure:: images/tables.png
+.. figure:: images/Tables.png
     :alt: Screenshot of list of tables in NGL database.
 
     **Figure 7.** Screenshot of list of tables in NGL database.
