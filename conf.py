@@ -30,7 +30,7 @@ release = '1.0.0'
 # ones.
 extensions = [
     "sphinx_rtd_theme",
-    "recommonmark",
+    "myst_parser",
     "sphinx_markdown_tables",
 ]
 
