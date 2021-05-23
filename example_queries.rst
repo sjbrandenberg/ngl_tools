@@ -1,6 +1,12 @@
-=============================
+===============
+Example Queries
+===============
+
+This document demonstrates how to query the NGL database using DesignSafe. The queries begin simple and become progressively more complicated.
+
+-----------------------------
 Query site table using pandas
-=============================
+-----------------------------
 
 An easy way to query the database is to use the Pandas read_sql command, which queries data and returns a Pandas dataframe. 
 The commands below imports the Pandas and ngl_db packages, creates a connection object to ngl_db called cnx, creates a 
