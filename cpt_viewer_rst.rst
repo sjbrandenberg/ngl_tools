@@ -86,3 +86,40 @@ SCPT_RES  Cone tip resistance (qc) in MPa
 SCPT_FRES Sleeve friction resistance (fs) in MPa
 SCPT_PWP  Pore-water pressure in MPa
 ========= ===========
+
+----
+Code
+----
+
+Import packages
+===============
+
+In this case, we need to import ipywidgets, matplotlib, numpy, ngl_db, and pandas. The "%matplotlib notebook" magic renders an interactive plot in the notebook.
+
+.. code-block:: python
+
+   %matplotlib notebook
+   import ipywidgets as widgets
+   from matplotlib import pyplot as plt
+   import numpy as np
+   import ngl_db
+   import pandas as pd
+
+Connect to database
+===================
+
+.. code-block:: python
+   
+    cnx = ngl_db.connect()
+    
+Query distinct SITE_ID and SITE_NAME for sites that have CPT data
+=================================================================
+The query below finds distinct SITE_ID and SITE_NAME fields that contain CPT data for the purpose of populating the site dropdown widget. 
+INNER JOIN commands are required between SITE, TEST, and SCPG to find sites containing CPT data.
+A site might contain more than one CPT test, but we do not want replicated fields in the site dropdown widget. Therefore we use the "DISTINCT" command.
+
+.. code-block:: python
+
+    sql = 'SELECT DISTINCT SITE.SITE_ID, SITE.SITE_NAME FROM SITE INNER JOIN TEST ON SITE.SITE_ID = TEST.SITE_ID INNER JOIN SCPG ON SCPG.TEST_ID = TEST.TEST_ID'
+    site_df = pd.read_sql_query(sql, cnx)
+    
