@@ -150,3 +150,78 @@ This query demonstrates the MySQL COUNT function to return the number of cone pe
   df = pd.DataFrame(data = [count_cpt, count_borehole, count_swave, count_vs, count_fldo_yes, count_fldo_no], index=['CPT Soundings','Boreholes','Surface Wave Measurements','Invasive Vs Profiles','Liquefaction Observations','Non-Liquefaction Observations'], columns=['Total'])
   pd.set_option('display.max_rows', 10)
   df
+
+.. figure:: images/Counts1.png
+  :alt: Screenshot of counts of data quantities in various tables.
+  
+  **Figure 5.** Screenshot of counts of data quantities in various tables.
+  
+-------------------------------------------------------------------------------------
+Query number of data entries in various tables, including indication of review status
+-------------------------------------------------------------------------------------
+
+This query builds upon the previous query by adding an indication of whether the data quantity has been reviewed. Data in the NGL database is submitted for review by users, and subsequently reviewed by members of the database working group to check the data against published sources, identify errors, and ensure data entry completeness.
+
+.. code-block:: python
+
+  # Imports libraries and modules
+  import pymysql
+  import pandas as pd
+  import ngl_db
+
+  # Establishes connection to the NGL database
+  cnx = ngl_db.connect()
+  cursor = cnx.cursor()
+
+  # Get all data, reviewed or not
+  command = 'SELECT COUNT(SCPG_ID) FROM SCPG'
+  cursor.execute(command)
+  count_cpt = cursor.fetchone()[0]
+  command = 'SELECT COUNT(FLDM_ID) FROM FLDM WHERE FLDM_SFEV=1'
+  cursor.execute(command)
+  count_fldo_yes = cursor.fetchone()[0]
+  command = 'SELECT COUNT(FLDM_ID) FROM FLDM WHERE FLDM_SFEV=0'
+  cursor.execute(command)
+  count_fldo_no = cursor.fetchone()[0]
+  command = 'SELECT COUNT(BORH_ID) FROM BORH'
+  cursor.execute(command)
+  count_borehole = cursor.fetchone()[0]
+  command = 'SELECT COUNT(GSWG_ID) FROM GSWG'
+  cursor.execute(command)
+  count_swave = cursor.fetchone()[0]
+  command = 'SELECT COUNT(GINV_ID) FROM GINV'
+  cursor.execute(command)
+  count_vs = cursor.fetchone()[0]
+
+  total = [count_cpt, count_borehole, count_swave, count_vs, count_fldo_yes, count_fldo_no]
+
+  command = 'SELECT COUNT(SCPG_ID) FROM SCPG INNER JOIN TEST on SCPG.TEST_ID = TEST.TEST_ID WHERE TEST.TEST_REVW = 1'
+  cursor.execute(command)
+  count_cpt = cursor.fetchone()[0]
+  command = 'SELECT COUNT(FLDM_ID) FROM FLDM INNER JOIN FLDO on FLDM.FLDO_ID = FLDO.FLDO_ID WHERE FLDM.FLDM_SFEV=1 AND FLDO.FLDO_REVW=1'
+  cursor.execute(command)
+  count_fldo_yes = cursor.fetchone()[0]
+  command = 'SELECT COUNT(FLDM_ID) FROM FLDM INNER JOIN FLDO on FLDM.FLDO_ID = FLDO.FLDO_ID WHERE FLDM.FLDM_SFEV=0 and FLDO.FLDO_REVW=1'
+  cursor.execute(command)
+  count_fldo_no = cursor.fetchone()[0]
+  command = 'SELECT COUNT(BORH_ID) FROM BORH INNER JOIN TEST on BORH.TEST_ID = TEST.TEST_ID WHERE TEST.TEST_REVW = 1'
+  cursor.execute(command)
+  count_borehole = cursor.fetchone()[0]
+  command = 'SELECT COUNT(GSWG_ID) FROM GSWG INNER JOIN TEST on GSWG.TEST_ID = TEST.TEST_ID WHERE TEST.TEST_REVW = 1'
+  cursor.execute(command)
+  count_swave = cursor.fetchone()[0]
+  command = 'SELECT COUNT(GINV_ID) FROM GINV INNER JOIN TEST on GINV.TEST_ID = TEST.TEST_ID WHERE TEST.TEST_REVW = 1'
+  cursor.execute(command)
+  count_vs = cursor.fetchone()[0]
+
+  reviewed = [count_cpt, count_borehole, count_swave, count_vs, count_fldo_yes, count_fldo_no]
+
+  quantities = ['CPT soundings', 'Boreholes', 'Surface Wave Measurements', 'Invasive Vs Profiles', 'Liquefaction Observations', 'Non-Liquefaction Observations']
+
+  df2 = pd.DataFrame({'Quantity': quantities, 'Total': total, 'Reviewed': reviewed})
+  df2
+  
+  .. figure:: images/Counts2.png
+    :alt: Screenshot of counts of data quantities in various tables, plus indication of review status.
+
+    **Figure 6.** Screenshot of counts of data quantities in various tables, plus indication of review status.
