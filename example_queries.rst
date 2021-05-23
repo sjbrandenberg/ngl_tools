@@ -113,7 +113,7 @@ This query retrieves all cone penetration test data from the Wildlife liquefacti
 .. figure:: images/WildlifeQuery2.png
    :alt: Screenshot of result of query of Wildlife liquefaction array query of cone penetration test data.
 
-    **Figure 4.** Screenshot of result of query of Wildlife liquefaction array query of cone penetration test data.
+   **Figure 4.** Screenshot of result of query of Wildlife liquefaction array query of cone penetration test data.
 
 ----------------------------------------------
 Query number of data entries in various tables
