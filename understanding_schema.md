@@ -1,10 +1,12 @@
-## Understanding the database schema
+=================================
+Understanding the database schema
+=================================
 
 The NGL database is organized into tables that are related to each other via keys. To query the database, 
 you will need to understand the organizational structure of the database, called the schema. The database 
 schema is documented at the following URL:
 
-[https://nextgenerationliquefaction.org/schema/index.html](https://nextgenerationliquefaction.org/schema/index.html)
+`https://nextgenerationliquefaction.org/schema/index.html <https://nextgenerationliquefaction.org/schema/index.html>`_
 
 Figure 1 describes the schema for the SITE table, which is a high level table in the NGL database where 
 users enter information about a particular site they have investigated following an earthquake. The SITE 
@@ -15,5 +17,7 @@ database that have been assigned a foreign key constraint to the SITE_ID field. 
 containing field observations of liquefaction at a site. The FLDO table has a SITE_ID field, called a foreign 
 key, that identifies the observation as being associated with the site with the same SITE_ID.
 
-![](SiteSchema.png)
-<strong>Figure 1.</strong> Screenshot of NGL site table schema.
+.. figure:: SiteSchema.png
+  :alt: screenshot of NGL site table schema
+  
+  **Figure 1.** Screenshot of NGL site table schema.
