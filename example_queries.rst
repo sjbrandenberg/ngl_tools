@@ -280,7 +280,7 @@ The cell below uses the DESCRIBE command to display the fields in the BOHR table
   pd.set_option('display.max_rows', len(bohr_desc))
   bohr_desc
  
-.. figure:: images/tables.png
+.. figure:: images/bohr_fields.png
     :alt: Screenshot of fields contained in BORH table.
 
     **Figure 8.** Screenshot of fields contained in BORH table. 
