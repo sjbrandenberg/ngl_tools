@@ -225,3 +225,62 @@ This query builds upon the previous query by adding an indication of whether the
     :alt: Screenshot of counts of data quantities in various tables, plus indication of review status.
 
     **Figure 6.** Screenshot of counts of data quantities in various tables, plus indication of review status.
+
+-------------------------
+Query list of table names
+-------------------------
+
+The cell below queries the names of all of the tables in the NGL database into a Pandas dataframe. By default, Pandas truncates dataframes for compact viewing. The cell below illustrates how to use the "set_option" command to set the number of rows to a custom value, in this case the length of the Pandas dataframe.
+
+.. code-block:: python
+
+  import pandas as pd
+  import ngl_db
+
+  cnx = ngl_db.connect()
+
+  sql = 'show tables'
+  table_names = pd.read_sql_query(sql, cnx)
+  pd.set_option('display.max_rows', len(table_names))
+  table_names
+  
+.. figure:: images/tables.png
+    :alt: Screenshot of list of tables in NGL database.
+
+    **Figure 7.** Screenshot of list of tables in NGL database.
+    
+---------------------------
+Query schema for BOHR table
+---------------------------
+
+The BORH table is the first in the alphebetical list of tables. A description of the headings returned by the DESCRIBE command is in the table below.
+
+========  ====
+Column    Description
+========  ====
+Field     Name of table entry
+Type      Datatype of entry
+Null      YES = null fields are allowed, NO = null fields are not allowed
+Key       PRI = Primary key, MUL = Foreign key
+Default   Default value
+Extra     auto_increment = value is automatically assigned incrementally
+========  ====
+
+The cell below uses the DESCRIBE command to display the fields in the BOHR table.
+
+.. code-block:: python
+
+  import pandas as pd
+  import ngl_db
+
+  cnx = ngl_db.connect()
+
+  sql = 'DESCRIBE BORH'
+  bohr_desc = pd.read_sql_query(sql, cnx)
+  pd.set_option('display.max_rows', len(bohr_desc))
+  bohr_desc
+ 
+.. figure:: images/tables.png
+    :alt: Screenshot of fields contained in BORH table.
+
+    **Figure 8.** Screenshot of fields contained in BORH table. 
