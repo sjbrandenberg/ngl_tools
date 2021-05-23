@@ -45,6 +45,7 @@ Query Wildlife liquefaction array data
 This cell queries event information from the EVNT table and surface evidence of liquefaction information from the FLDM table at the Wildlife Array site. The definition of each table and site is below. The query utilizes an INNER JOIN statement to combine tables based on shared keys, and will return all values that have matching keys in both tables. For more details, see `https://www.w3schools.com/sql/sql_join_inner.asp <https://www.w3schools.com/sql/sql_join_inner.asp>`_  
 
 **Table 1.** List of tables utilized in Wildlife liquefaction array queries.
+
 ===== ===========
 Table	Description
 ===== ===========
@@ -55,6 +56,7 @@ SITE	A site is the highest level organizational structure for information in the
 ===== ===========
 
 **Table 2.** List of fields utilized in Wildlife liquefaction array queries.
+
 ========= ===========
 Field	    Description
 ========= ===========
@@ -262,6 +264,7 @@ Query schema for BOHR table
 The BORH table is the first in the alphebetical list of tables. A description of the headings returned by the DESCRIBE command is in the table below.
 
 **Table 3.** List of headings describing fields in table returned by SQL DESCRIBE command.
+
 ========  ====
 Column    Description
 ========  ====
