@@ -105,7 +105,7 @@ This query retrieves all cone penetration test data from the Wildlife liquefacti
   pd.set_option('display.max_rows', 10)
   df
   
-  .. figure:: images/WildlifeQuery2.png
-    :alt: Screenshot of result of query of Wildlife liquefaction array query of cone penetration test data.
+.. figure:: images/WildlifeQuery2.png
+   :alt: Screenshot of result of query of Wildlife liquefaction array query of cone penetration test data.
 
     **Figure 4.** Screenshot of result of query of Wildlife liquefaction array query of cone penetration test data.
