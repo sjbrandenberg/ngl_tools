@@ -28,7 +28,7 @@ the NGL database. The SITE_ID field is not contiguous because sites are sometime
 SITE_ID field is never re-used. The Pandas dataframe is broken between SITE_ID 151 and 677 for ease of displaying 
 information in the output window. Many rows of data are not displayed in Figure 2 as a result.
 
-.. figure:: SiteTableQuery.png
+.. figure:: images/SiteTableQuery.png
   :alt: Screenshot of result of query of SITE table data.
   
   **Figure 2.** Results of query of SITE table data.
@@ -76,14 +76,8 @@ FLDM_DESC	Description of liquefaction manifestation
   df = pd.read_sql_query(sql, cnx)
   pd.set_option('display.max_colwidth', 100)
   df
-  
-== ======== ===================== ======== ======== ========== ========== =========
-I  EVNT_MAG EVNT_NM               EVNT_YR  FLDM_LAT FLDM_LON   FLDM_SFEV  FLDM_DESC
-== ======== ===================== ======== ======== ========== ========== =========
-0  5.90     Westmorland           1981     33.0976  -115.5306  1          Significant liquefaction was observed at many locations within the Imperial Valley. Bennett et ...
-1  6.22     Superstition Hills-01 1987     33.0976  -115.5306  0          Holzer et al. (1989) indicates the piezometers installed by Bennett et al. (1984) showed no evid...
-2  6.54     Superstition Hills-02 1987     33.0976  -115.5306  1          Superstition Hills Earthquake observations by Holzer et al. (1989)
-3  7.20     El Mayor-Cucapah      2010     33.0976  -115.5306  0          No observed liquefaction manifestation. This is also confirmed by co-located piezometric recordi...
-== ======== ===================== ======== ======== ========== ========== =========
 
-**Figure 3.** Results of query of Wildlife liquefaction array query of event information and field observations.
+.. figure:: images/WildlifeQuery1.png
+  :alt: Screenshot of result of query of Wildlife liquefaction array query of event information and field observations.
+  
+  **Figure 3.** Screenshot of result of query of Wildlife liquefaction array query of event information and field observations.
