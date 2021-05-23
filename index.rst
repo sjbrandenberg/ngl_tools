@@ -49,4 +49,3 @@ ______________
    :maxdepth: 1
    
    cpt_viewer
-   cpt_viewer
