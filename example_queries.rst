@@ -81,3 +81,31 @@ FLDM_DESC	Description of liquefaction manifestation
   :alt: Screenshot of result of query of Wildlife liquefaction array query of event information and field observations.
   
   **Figure 3.** Screenshot of result of query of Wildlife liquefaction array query of event information and field observations.
+
+--------------------------------------
+Query Wildlife liquefaction CPT data
+--------------------------------------
+
+This query retrieves all cone penetration test data from the Wildlife liquefaction array. INNER JOIN statements are needed to link SCPT to SCPG (using SCPG_ID), SCPG to TEST (using TEST_ID), and TEST to SITE (using SITE_ID). This query demonstrates propagation of primary and foreign keys through the schema heirarchy.
+
+.. code-block:: python
+  
+  import pandas as pd
+  import ngl_db
+
+  cnx = ngl_db.connect()
+  
+  command = 'SELECT TEST.TEST_ID, TEST.TEST_NAME, SCPT. SCPT_DPTH, SCPT.SCPT_RES, SCPT.SCPT_FRES FROM SCPT '
+  command += 'INNER JOIN SCPG ON SCPT.SCPG_ID = SCPG.SCPG_ID '
+  command += 'INNER JOIN TEST ON TEST.TEST_ID = SCPG.TEST_ID '
+  command += 'INNER JOIN SITE ON SITE.SITE_ID = TEST.SITE_ID '
+  command += 'WHERE SITE.SITE_NAME = "Wildlife Array"'
+  
+  df = pd.read_sql_query(command, cnx)
+  pd.set_option('display.max_rows', 10)
+  df
+  
+  .. figure:: images/WildlifeQuery2.png
+    :alt: Screenshot of result of query of Wildlife liquefaction array query of cone penetration test data.
+
+    **Figure 4.** Screenshot of result of query of Wildlife liquefaction array query of cone penetration test data.
