@@ -132,26 +132,27 @@ Dropdown widgets accept key-value pairs for the "options" field. This is desirea
 
 .. code-block:: python
 
-   site_df.set_index('SITE_ID',inplace=True)
-   site_df.sort_values(by='SITE_NAME',inplace=True)
-   site_options = [('Select a site', -1)]
-   for key, value in site_df['SITE_NAME'].to_dict().items():
-       site_options.append((value, key))
-   site_widget = widgets.Dropdown(options=site_options, description='Site')
+    site_df.set_index('SITE_ID',inplace=True)
+    site_df.sort_values(by='SITE_NAME',inplace=True)
+    site_options = [('Select a site', -1)]
+    for key, value in site_df['SITE_NAME'].to_dict().items():
+        site_options.append((value, key))
+    site_widget = widgets.Dropdown(options=site_options, description='Site')
 
 Create empty test_widget. This widget will get populated when a site is selected
 ================================================================================
 
 .. code-block:: python
 
-   test_options = [('Select a test', -1)]
-   test_widget = widgets.Dropdown(options=test_options, description='Test', disabled=True)
-   widget_box= widgets.VBox([site_widget, test_widget])
-   display(widget_box)
+    test_options = [('Select a test', -1)]
+    test_widget = widgets.Dropdown(options=test_options, description='Test', disabled=True)
+    widget_box= widgets.VBox([site_widget, test_widget])
+    display(widget_box)
 
 Create plot objects and initialize empty plots
 ==============================================
 .. code-block:: python
+
    fig, ax = plt.subplots(1, 3, figsize=(6,4), sharey='row')
 
    line1, = ax[0].plot([], [])
@@ -176,6 +177,7 @@ Create empty metadata_widget. This widget will get populated when a CPT test is 
 ========================================================================================
 
 .. code-block:: python
+
    metadata_widget = widgets.HTML(value='')
    display(metadata_widget)
 
@@ -186,6 +188,7 @@ This code sets data for the plots to be empty, and sets the metadata widget to b
 If a site is selected, a SQL query is made on all of the CPT tests for that site, and the test dropdown is populated.
 
 .. code-block:: python
+
    def on_site_widget_change(change):
        line1.set_xdata([])
        line1.set_ydata([])
@@ -211,6 +214,7 @@ If a site is selected, a SQL query is made on all of the CPT tests for that site
 Define function for querying CPT data and metadata when a user selects a CPT test
 =================================================================================
 .. code-block:: python
+
    def on_test_widget_change(change):
        if(change['new']!=-1):
            sql = 'SELECT SCPT.SCPT_DPTH, SCPT.SCPT_RES, SCPT.SCPT_FRES, SCPT.SCPT_PWP FROM SCPT INNER JOIN SCPG ON SCPT.SCPG_ID = SCPG.SCPG_ID WHERE SCPG.TEST_ID = ' + str(change['new'])
@@ -250,5 +254,6 @@ Define function for querying CPT data and metadata when a user selects a CPT tes
 Use the ipywidgets 'observe' command to link widgets to appropriate functions on change
 =======================================================================================
 .. code-block:: python
+
    site_widget.observe(on_site_widget_change, names='value')
    test_widget.observe(on_test_widget_change, names='value')
