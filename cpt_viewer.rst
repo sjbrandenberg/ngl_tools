@@ -16,7 +16,7 @@ Cone penetration test data plotted in the notebook include tip resistance, sleev
 ----------------
 Jupyter notebook
 ----------------
-`Jupyter notebook on DesignSafe <https://jupyter.designsafe-ci.org/user/sjbrande/notebooks/CommunityData//NGL/CPT_viewer.ipynb>`_
+`Jupyter notebook on DesignSafe <https://jupyter.designsafe-ci.org/user/name/tree/CommunityData/NGL/CPT_viewer.ipynb>`_
 
 ------
 Tables
