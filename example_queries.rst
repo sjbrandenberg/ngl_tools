@@ -44,6 +44,7 @@ Query Wildlife liquefaction array data
 
 This cell queries event information from the EVNT table and surface evidence of liquefaction information from the FLDM table at the Wildlife Array site. The definition of each table and site is below. The query utilizes an INNER JOIN statement to combine tables based on shared keys, and will return all values that have matching keys in both tables. For more details, see `https://www.w3schools.com/sql/sql_join_inner.asp <https://www.w3schools.com/sql/sql_join_inner.asp>`_  
 
+**Table 1.** List of tables utilized in Wildlife liquefaction array queries.
 ===== ===========
 Table	Description
 ===== ===========
@@ -53,16 +54,21 @@ FLDO	Field evidence of liquefaction information at a site
 SITE	A site is the highest level organizational structure for information in the database
 ===== ===========
 
+**Table 2.** List of fields utilized in Wildlife liquefaction array queries.
 ========= ===========
 Field	    Description
 ========= ===========
-EVNT_MAG	Earthquake Magnitude
-EVNT_NM	  Event Name
-EVNT_YR	  Event Year
+EVNT_MAG	Earthquake magnitude
+EVNT_NM	  Event name
+EVNT_YR	  Event year
 FLDM_LAT	Latitude of manifestation observation
 FLDM_LON	Longitude of manifestation observation
 FLDM_SFEV	Indication of whether surface manifestation occurred (0 = no, 1 = yes)
 FLDM_DESC	Description of liquefaction manifestation
+FLDO_ID   Primary key in FLDO table, and foreign key in FLDM table
+EVNT_ID   Primary key in EVNT table, and foreign key in FLDO table
+SITE_ID   Primary key in SITE table, and foreign key in FLDO table
+SITE_NAME Site name
 ========= ===========
 
 .. code-block:: python
@@ -255,6 +261,7 @@ Query schema for BOHR table
 
 The BORH table is the first in the alphebetical list of tables. A description of the headings returned by the DESCRIBE command is in the table below.
 
+**Table 3.** List of headings describing fields in table returned by SQL DESCRIBE command.
 ========  ====
 Column    Description
 ========  ====
