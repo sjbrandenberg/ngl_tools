@@ -10,6 +10,8 @@ The cone penetration test viewer demonstrates the following:
 
 Cone penetration test data plotted in the notebook include tip resistance, sleeve friction, and pore pressure. In some cases, sleeve friction and pore pressure are not measured, in which case the plots are empty.
 
+### Jupyter notebook
+[Jupyter notebook on DesignSafe](https://jupyter.designsafe-ci.org/user/sjbrande/notebooks/CommunityData//NGL/CPT_viewer.ipynb)
 ### Tables
 Tables queried in this notebook are described in the table below.
 | Table | Description |
