@@ -40,7 +40,7 @@ ______________
    
 .. toctree::
    :caption: Jupyter Notebooks
-   :maxdepth: 2
+   :maxdepth: 1
    
    example_queries
    cpt_viewer
