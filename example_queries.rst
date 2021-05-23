@@ -114,3 +114,39 @@ This query retrieves all cone penetration test data from the Wildlife liquefacti
    :alt: Screenshot of result of query of Wildlife liquefaction array query of cone penetration test data.
 
     **Figure 4.** Screenshot of result of query of Wildlife liquefaction array query of cone penetration test data.
+
+----------------------------------------------
+Query number of data entries in various tables
+----------------------------------------------
+
+This query demonstrates the MySQL COUNT function to return the number of cone penetration tests, boreholes, surface wave measurements, invasive shear wave velocity measurement, liquefaction observations, and non-liquefaction observations. Rather than querying directly to a Pandas dataframe, in this case we use the pymysql package to query the data, and subsequently assemble the count data into a Pandas dataframe for viewing.
+
+.. code-block:: python
+
+  import pymysql
+  import pandas as pd
+  import ngl_db
+
+  cnx = ngl_db.connect()
+  cursor = cnx.cursor()
+  command = 'SELECT COUNT(SCPG_ID) FROM SCPG'
+  cursor.execute(command)
+  count_cpt = cursor.fetchone()[0]
+  command = 'SELECT COUNT(FLDM_ID) FROM FLDM WHERE FLDM_SFEV=1'
+  cursor.execute(command)
+  count_fldo_yes = cursor.fetchone()[0]
+  command = 'SELECT COUNT(FLDM_ID) FROM FLDM WHERE FLDM_SFEV=0'
+  cursor.execute(command)
+  count_fldo_no = cursor.fetchone()[0]
+  command = 'SELECT COUNT(BORH_ID) FROM BORH'
+  cursor.execute(command)
+  count_borehole = cursor.fetchone()[0]
+  command = 'SELECT COUNT(GSWG_ID) FROM GSWG'
+  cursor.execute(command)
+  count_swave = cursor.fetchone()[0]
+  command = 'SELECT COUNT(GINV_ID) FROM GINV'
+  cursor.execute(command)
+  count_vs = cursor.fetchone()[0]
+  df = pd.DataFrame(data = [count_cpt, count_borehole, count_swave, count_vs, count_fldo_yes, count_fldo_no], index=['CPT Soundings','Boreholes','Surface Wave Measurements','Invasive Vs Profiles','Liquefaction Observations','Non-Liquefaction Observations'], columns=['Total'])
+  pd.set_option('display.max_rows', 10)
+  df
