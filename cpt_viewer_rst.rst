@@ -16,3 +16,17 @@ Cone penetration test data plotted in the notebook include tip resistance, sleev
 Jupyter notebook
 ----------------
 `Jupyter notebook on DesignSafe <https://jupyter.designsafe-ci.org/user/sjbrande/notebooks/CommunityData//NGL/CPT_viewer.ipynb>`_
+
+------
+Tables
+------
+Tables queried in this notebook are described in the table below.
+
+===== ===========
+Table Description
+===== ===========
+SITE  Highest level table that serves as the organizational structure for project team collaboration
+TEST  Table containing descriptions of tests including CPT, boreholes, geophysical tests, and groundwater measurements
+SCPG  Table containing metadata about CPT test
+SCPT  Table containing CPT test data
+===== ===========
