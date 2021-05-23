@@ -39,13 +39,8 @@ ______________
    understanding_schema
    
 .. toctree::
-   :caption: Example Queries
+   :caption: Jupyter Notebooks
    :maxdepth: 1
    
-   site_table_query
-
-.. toctree::
-   :caption: Data Viewers
-   :maxdepth: 1
-   
+   example_queries
    cpt_viewer
