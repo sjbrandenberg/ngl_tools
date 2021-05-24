@@ -92,7 +92,7 @@ SCPT_PWP  Pore-water pressure in MPa
 Code
 ----
 
-This section describes the `Jupyter notebook <https://jupyter.designsafe-ci.org/user/sjbrande/notebooks/CommunityData//NGL/CPT_viewer.ipynb>`_ available via DesignSafe. The code is broken into chunks with explanations of each section of code.
+This section describes the `Jupyter notebook <https://jupyter.designsafe-ci.org/user/name/notebooks/CommunityData/NGL/CPT_viewer.ipynb>`_ available via DesignSafe. The code is broken into chunks with explanations of each section of code.
 
 Import packages
 ===============
