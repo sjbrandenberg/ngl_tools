@@ -276,7 +276,7 @@ Default   Default value
 Extra     auto_increment = value is automatically assigned incrementally
 ========  ====
 
-The cell below uses the DESCRIBE command to display the fields in the BORH table.
+The cell below uses the SHOW FULL COLUMNS command to display the fields in the BORH table. This includes a "Comment" that defines each field.
 
 .. code-block:: python
 
@@ -285,7 +285,7 @@ The cell below uses the DESCRIBE command to display the fields in the BORH table
 
   cnx = ngl_db.connect()
 
-  sql = 'DESCRIBE BORH'
+  sql = 'SHOW FULL COLUMNS FROM BORH'
   bohr_desc = pd.read_sql_query(sql, cnx)
   pd.set_option('display.max_rows', len(bohr_desc))
   bohr_desc
