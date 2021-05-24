@@ -258,7 +258,7 @@ The cell below queries the names of all of the tables in the NGL database into a
     **Figure 7.** Screenshot of list of tables in NGL database.
     
 ---------------------------
-Query schema for BOHR table
+Query schema for BORH table
 ---------------------------
 
 The BORH table is the first in the alphebetical list of tables. A description of the headings returned by the DESCRIBE command is in the table below.
@@ -276,7 +276,7 @@ Default   Default value
 Extra     auto_increment = value is automatically assigned incrementally
 ========  ====
 
-The cell below uses the DESCRIBE command to display the fields in the BOHR table.
+The cell below uses the DESCRIBE command to display the fields in the BORH table.
 
 .. code-block:: python
 
