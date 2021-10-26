@@ -2,7 +2,7 @@
 Oct 2021 DesignSafe Webinar
 ============================
 
-The DesignSafe_Webinar_Oct2021 notebook was created during a webinar/workshop hosted by DesignSafe.
+The DesignSafe_Webinar_Oct2021 notebook was created during a webinar/workshop hosted by DesignSafe and the Pacific Earthquake Engineering Research (PEER) center.
 
 The notebook demonstrates the following:
 
@@ -18,6 +18,7 @@ Related Links
 Note: Links will be updated once the videos are available
 
 `DesignSafe Webinar Recording <https://jupyter.designsafe-ci.org/user/name/tree/CommunityData/NGL/DesignSafe_Webinar_Oct2021.ipynb>`_
+
 `DesignSafe Workshop Recording <https://jupyter.designsafe-ci.org/user/name/tree/CommunityData/NGL/DesignSafe_Webinar_Oct2021.ipynb>`_
 
 ----------------
