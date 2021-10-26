@@ -11,7 +11,6 @@ The Vs (Invasive) Test Viewer demonstrates the following:
 #. Using the ipywidgets "observe" feature to call functions when users select a widget value
 #. Plotting data from the selected invasive geophysical test using matplotlib
 
-Cone penetration test data plotted in the notebook include tip resistance, sleeve friction, and pore pressure. In some cases, sleeve friction and pore pressure are not measured, in which case the plots are empty.
 
 ----------------
 Jupyter notebook
