@@ -17,9 +17,9 @@ Related Links
 ----------------
 Note: Links will be updated once the videos are available
 
-`DesignSafe Webinar Recording <https://jupyter.designsafe-ci.org/user/name/tree/CommunityData/NGL/DesignSafe_Webinar_Oct2021.ipynb>`_
+`DesignSafe Webinar Recording <https://youtu.be/TNOPOU4lx5w>`_
 
-`DesignSafe Workshop Recording <https://jupyter.designsafe-ci.org/user/name/tree/CommunityData/NGL/DesignSafe_Webinar_Oct2021.ipynb>`_
+`DesignSafe Workshop Recording <https://youtu.be/_nKpSqa1rso>`_
 
 ----------------
 Jupyter notebook
