@@ -27,7 +27,7 @@ the NGL database. The SITE_ID field is not contiguous because sites are sometime
 SITE_ID field is never re-used. The Pandas dataframe is broken between SITE_ID 151 and 677 for ease of displaying 
 information in the output window. Many rows of data are not displayed in Figure 2 as a result.
 
-[Screenshot of result of query of SITE table data.](images/SiteTableQuery.png)
+![Screenshot of result of query of SITE table data.](images/SiteTableQuery.png)
   
   **Figure 2.** Results of query of SITE table data.
 
@@ -77,7 +77,7 @@ pd.set_option('display.max_colwidth', 100)
 df
 ```
 
-[Screenshot of result of query of Wildlife liquefaction array query of event information and field observations.](images/WildlifeQuery1.png)
+![Screenshot of result of query of Wildlife liquefaction array query of event information and field observations.](images/WildlifeQuery1.png)
   
   **Figure 3.** Screenshot of result of query of Wildlife liquefaction array query of event information and field observations.
 
@@ -102,7 +102,7 @@ pd.set_option('display.max_rows', 10)
 df
 ```
 
-[Screenshot of result of query of Wildlife liquefaction array query of cone penetration test data.](images/WildlifeQuery2.png)
+![Screenshot of result of query of Wildlife liquefaction array query of cone penetration test data.](images/WildlifeQuery2.png)
 **Figure 4.** Screenshot of result of query of Wildlife liquefaction array query of cone penetration test data.
 
 ## Query number of data entries in various tables
@@ -139,7 +139,7 @@ pd.set_option('display.max_rows', 10)
 df
 ```
 
-[Screenshot of counts of data quantities in various tables.](images/Counts1.png)
+![Screenshot of counts of data quantities in various tables.](images/Counts1.png)
 **Figure 5.** Screenshot of counts of data quantities in various tables.
   
 ## Query number of data entries in various tables, including indication of review status
@@ -205,7 +205,7 @@ df2 = pd.DataFrame({'Quantity': quantities, 'Total': total, 'Reviewed': reviewed
 df2
 ```
 
-[Screenshot of counts of data quantities in various tables, plus indication of review status.](images/Counts2.png)
+![Screenshot of counts of data quantities in various tables, plus indication of review status.](images/Counts2.png)
 **Figure 6.** Screenshot of counts of data quantities in various tables, plus indication of review status.
 
 ## Query list of table names
@@ -223,7 +223,7 @@ table_names = pd.read_sql_query(sql, cnx)
 pd.set_option('display.max_rows', len(table_names))
 table_names
 ```
-[Screenshot of list of tables in NGL database.](images/Tables.png)
+![Screenshot of list of tables in NGL database.](images/Tables.png)
 **Figure 7.** Screenshot of list of tables in NGL database.
     
 ## Query schema for BORH table
@@ -255,5 +255,5 @@ pd.set_option('display.max_rows', len(bohr_desc))
 bohr_desc
 ```
 
-[Screenshot of fields contained in BORH table.](images/borh_fields.png)
+![Screenshot of fields contained in BORH table.](images/borh_fields.png)
 **Figure 8.** Screenshot of fields contained in BORH table. 
