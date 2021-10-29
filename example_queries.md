@@ -33,7 +33,7 @@ information in the output window. Many rows of data are not displayed in Figure 
 
 ## Query Wildlife liquefaction array data
 
-This cell queries event information from the EVNT table and surface evidence of liquefaction information from the FLDM table at the Wildlife Array site. The definition of each table and site is below. The query utilizes an INNER JOIN statement to combine tables based on shared keys, and will return all values that have matching keys in both tables. For more details, see `https://www.w3schools.com/sql/sql_join_inner.asp <https://www.w3schools.com/sql/sql_join_inner.asp>`_  
+This cell queries event information from the EVNT table and surface evidence of liquefaction information from the FLDM table at the Wildlife Array site. The definition of each table and site is below. The query utilizes an INNER JOIN statement to combine tables based on shared keys, and will return all values that have matching keys in both tables. For more details, see <https://www.w3schools.com/sql/sql_join_inner.asp>
 
 **Table 1.** List of tables utilized in Wildlife liquefaction array queries.
 
