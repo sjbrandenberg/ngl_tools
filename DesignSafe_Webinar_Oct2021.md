@@ -16,17 +16,15 @@ Cone penetration test data plotted in the notebook include tip resistance, sleev
 Related Links
 ----------------
 
-Note: Links will be updated once the videos are available
+[DesignSafe Webinar Recording](https://youtu.be/TNOPOU4lx5w)
 
-`DesignSafe Webinar Recording <https://youtu.be/TNOPOU4lx5w>`_
-
-`DesignSafe Workshop Recording <https://youtu.be/_nKpSqa1rso>`_
+[DesignSafe Workshop Recording](https://youtu.be/_nKpSqa1rso)
 
 
 Jupyter notebook
 ----------------
 
-`Jupyter notebook on DesignSafe <https://jupyter.designsafe-ci.org/user/name/tree/CommunityData/NGL/DesignSafe_Webinar_Oct2021.ipynb>`_
+[Jupyter notebook on DesignSafe](https://jupyter.designsafe-ci.org/user/name/tree/CommunityData/NGL/DesignSafe_Webinar_Oct2021.ipynb)
 
 
 Tables
@@ -95,7 +93,7 @@ Tables queried in this notebook, and the fields within those tables are describe
 Code
 ----
 
-This section describes the `Jupyter notebook <https://jupyter.designsafe-ci.org/user/name/notebooks/CommunityData/NGL/DesignSafe_Webinar_Oct2021.ipynb>`_ available via DesignSafe. The code is broken into chunks with explanations of each section of code.
+This section describes the [Jupyter notebook](https://jupyter.designsafe-ci.org/user/name/notebooks/CommunityData/NGL/DesignSafe_Webinar_Oct2021.ipynb) available via DesignSafe. The code is broken into chunks with explanations of each section of code.
 
 
 ### Connect to NGL Database
