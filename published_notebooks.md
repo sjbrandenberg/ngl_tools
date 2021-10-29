@@ -1,6 +1,6 @@
 # Notebooks published in DesignSafe
 
-Jupyter notebooks for this project are located in two different places. One of them is Community Data, which is available via the Next-Generation Liquefaction app in the Tools & Applicaitons section of the Workspace. That app points `here <https://jupyter.designsafe-ci.org/user/sjbrande/tree/CommunityData/NGL>`_. In addition, we have published a number of notebooks in the published area. These notebooks have been assigned a digital object identifier and can be cited as indicated below. The notebooks in Community Data are maintained more frequently.
+Jupyter notebooks for this project are located in two different places. One of them is Community Data, which is available via the Next-Generation Liquefaction app in the Tools & Applicaitons section of the Workspace. That app points [here](https://jupyter.designsafe-ci.org/user/sjbrande/tree/CommunityData/NGL). In addition, we have published a number of notebooks in the published area. These notebooks have been assigned a digital object identifier and can be cited as indicated below. The notebooks in Community Data are maintained more frequently.
 
 1. Brandenberg, S. J. , and Zimmaro, P. (2019). "'Next Generation Liquefaction (NGL) Partner Dataset - Sample Queries', in Next Generation Liquefaction (NGL) Partner Dataset - Sample Queries DesignSafe-CI, [10.17603/ds2-xvp9-ag60](https://doi.org/10.17603/ds2-xvp9-ag60)
 
