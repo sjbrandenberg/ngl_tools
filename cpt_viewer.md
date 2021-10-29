@@ -33,76 +33,63 @@ Tables queried in this notebook, and the fields within those tables are describe
 | SITE_ID | Primary key for the site table |
 | SITE_NAME | Site name (appears in site_widget dropdown) |
 
-TEST Table
-==========
+### TEST Table
 
-========= ===========
-Field     Description
-========= ===========
-TEST_ID   Primary key for TEST table
-SITE_ID   Foreign key from SITE table associating a test with a site
-TEST_NAME Test name (appears in test_widget dropdown)
-========= ===========
+| Field   | Description |
+| -----   | ----------- |
+| TEST_ID |  Primary key for TEST table |
+| SITE_ID |  Foreign key from SITE table associating a test with a site |
+| TEST_NAME | Test name (appears in test_widget dropdown) |
 
-SCPG Table
-==========
+### SCPG Table
 
-========= ===========
-Field     Description
-========= ===========
-SCPG_ID   Primary key for SCPG table
-TEST_ID   Foreign key from TEST table associating a cone penetration test with a test
-SCPG_CSA  Surface area of the cone tip in square centimeters
-SCPG_RATE Nominal rate of penetration of the cone in cm/s
-SCPG_CREW Name of logger / organization
-SCPG_METH Penetration method
-SCPG_STAR Start date of activity
-SCPG_ENDD End date of activity
-SCPG_PWP  Position of pore pressure measurement on cone
-SCPG_REM  Remarks
-========= ===========
+| Field   | Description |
+| -----   | ----------- |
+| SCPG_ID | Primary key for SCPG table |
+| TEST_ID |  Foreign key from TEST table associating a cone penetration test with a test |
+| SCPG_CSA | Surface area of the cone tip in square centimeters |
+| SCPG_RATE | Nominal rate of penetration of the cone in cm/s |
+| SCPG_CREW | Name of logger / organization |
+| SCPG_METH | Penetration method |
+| SCPG_STAR | Start date of activity |
+| SCPG_ENDD | End date of activity |
+| SCPG_PWP  | Position of pore pressure measurement on cone |
+| SCPG_REM  | Remarks |
 
-SCPT Table
-==========
+### SCPT Table
 
-========= ===========
-Field     Description
-========= ===========
-SCPT_ID   Primary key for SCPT Table
-SCPG_ID   Foreign key from SCPG table associating cone penetratin test data with test metadata
-SCPG_DPTH Depth of CPT measurement in m
-SCPT_RES  Cone tip resistance (qc) in MPa
-SCPT_FRES Sleeve friction resistance (fs) in MPa
-SCPT_PWP  Pore-water pressure in MPa
-========= ===========
+| Field   | Description |
+| -----   | ----------- |
+| SCPT_ID |   Primary key for SCPT Table   |
+| SCPG_ID |   Foreign key from SCPG table associating cone penetratin test data with test metadata | 
+| SCPG_DPTH | Depth of CPT measurement in m |
+| SCPT_RES  | Cone tip resistance (qc) in MPa |
+| SCPT_FRES | Sleeve friction resistance (fs) in MPa | 
+| SCPT_PWP  | Pore-water pressure in MPa |
 
-----
-Code
-----
+## Code
 
-This section describes the `Jupyter notebook <https://jupyter.designsafe-ci.org/user/name/notebooks/CommunityData/NGL/CPT_viewer.ipynb>`_ available via DesignSafe. The code is broken into chunks with explanations of each section of code.
+This section describes the [Jupyter notebook](https://jupyter.designsafe-ci.org/user/name/notebooks/CommunityData/NGL/CPT_viewer.ipynb) available via DesignSafe. The code is broken into chunks with explanations of each section of code.
 
-Import packages
-===============
+### Import packages
 
 In this case, we need to import ipywidgets, matplotlib, numpy, ngl_db, and pandas. The "%matplotlib notebook" magic renders an interactive plot in the notebook.
 
-.. code-block:: python
+```python
+%matplotlib notebook
+import ipywidgets as widgets
+from matplotlib import pyplot as plt
+import numpy as np
+import ngl_db
+import pandas as pd
+```
 
-   %matplotlib notebook
-   import ipywidgets as widgets
-   from matplotlib import pyplot as plt
-   import numpy as np
-   import ngl_db
-   import pandas as pd
+### Connect to database
 
-Connect to database
-===================
+```python
+cnx = ngl_db.connect()
+```
 
-.. code-block:: python
-   
-    cnx = ngl_db.connect()
-    
 Query distinct SITE_ID and SITE_NAME for sites that have CPT data
 =================================================================
 The query below finds distinct SITE_ID and SITE_NAME fields that contain CPT data for the purpose of populating the site dropdown widget. 
