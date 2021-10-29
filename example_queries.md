@@ -79,7 +79,8 @@ df
 
 ![Screenshot of result of query of Wildlife liquefaction array query of event information and field observations.](images/WildlifeQuery1.png)
   
-  **Figure 3.** Screenshot of result of query of Wildlife liquefaction array query of event information and field observations.
+
+**Figure 3.** Screenshot of result of query of Wildlife liquefaction array query of event information and field observations.
 
 ## Query Wildlife liquefaction CPT data
 
@@ -103,6 +104,7 @@ df
 ```
 
 ![Screenshot of result of query of Wildlife liquefaction array query of cone penetration test data.](images/WildlifeQuery2.png)
+
 **Figure 4.** Screenshot of result of query of Wildlife liquefaction array query of cone penetration test data.
 
 ## Query number of data entries in various tables
@@ -140,6 +142,7 @@ df
 ```
 
 ![Screenshot of counts of data quantities in various tables.](images/Counts1.png)
+
 **Figure 5.** Screenshot of counts of data quantities in various tables.
   
 ## Query number of data entries in various tables, including indication of review status
@@ -206,6 +209,7 @@ df2
 ```
 
 ![Screenshot of counts of data quantities in various tables, plus indication of review status.](images/Counts2.png)
+
 **Figure 6.** Screenshot of counts of data quantities in various tables, plus indication of review status.
 
 ## Query list of table names
@@ -224,6 +228,7 @@ pd.set_option('display.max_rows', len(table_names))
 table_names
 ```
 ![Screenshot of list of tables in NGL database.](images/Tables.png)
+
 **Figure 7.** Screenshot of list of tables in NGL database.
     
 ## Query schema for BORH table
@@ -256,4 +261,5 @@ bohr_desc
 ```
 
 ![Screenshot of fields contained in BORH table.](images/borh_fields.png)
+
 **Figure 8.** Screenshot of fields contained in BORH table. 
