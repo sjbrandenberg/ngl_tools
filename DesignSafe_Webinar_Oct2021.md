@@ -6,9 +6,9 @@ The DesignSafe_Webinar_Oct2021 notebook was created during a webinar/workshop ho
 
 The notebook demonstrates the following:
 
-#. Connecting to NGL database in DesignSafe
-#. Querying data from SITE, TEST, SCPG, and SCPT tables into Pandas dataframes
-#. Plotting data from the selected test using matplotlib
+1. Connecting to NGL database in DesignSafe
+2. Querying data from SITE, TEST, SCPG, and SCPT tables into Pandas dataframes
+3. Plotting data from the selected test using matplotlib
 
 Cone penetration test data plotted in the notebook include tip resistance, sleeve friction, and pore pressure. In some cases, sleeve friction and pore pressure are not measured, in which case the plots are empty.
 
