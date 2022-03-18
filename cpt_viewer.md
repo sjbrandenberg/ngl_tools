@@ -73,21 +73,23 @@ This section describes the [Jupyter notebook](https://jupyter.designsafe-ci.org/
 
 ### Import packages
 
-In this case, we need to import ipywidgets, matplotlib, numpy, ngl_db, and pandas. The "%matplotlib notebook" magic renders an interactive plot in the notebook.
+In this case, we need to import ipywidgets, matplotlib, numpy, ngl_db, and pandas. The "%matplotlib notebook" magic works in Jupyter notebooks and the "%matplotlib widget" magic works in Jupyter Lab, and renders an interactive plot in the notebook.
 
 ```python
-%matplotlib notebook
-import ipywidgets as widgets
-from matplotlib import pyplot as plt
-import numpy as np
-import ngl_db
+try:
+    %matplotlib widget
+except:
+    try:
+        %matplotlib notebook
+    except:
+        print("Falling back to '%matplotlib inline'")
+
 import pandas as pd
-```
-
-### Connect to database
-
-```python
-cnx = ngl_db.connect()
+import ipywidgets as widgets
+import matplotlib.pyplot as plt
+from IPython.display import HTML, display
+import numpy as np
+import designsafe_db.ngl_db as ngl
 ```
 
 ### Query distinct SITE_ID and SITE_NAME for sites that have CPT data
@@ -97,7 +99,7 @@ A site might contain more than one CPT test, but we do not want replicated field
 
 ```python
 sql = 'SELECT DISTINCT SITE.SITE_ID, SITE.SITE_NAME FROM SITE INNER JOIN TEST ON SITE.SITE_ID = TEST.SITE_ID INNER JOIN SCPG ON SCPG.TEST_ID = TEST.TEST_ID'
-site_df = pd.read_sql_query(sql, cnx)
+site_df = ngl.read_sql(sql)
 ```
 
 ### Create key, value pairs for SITE_NAME and SITE_ID, and create site_widget
@@ -124,32 +126,30 @@ display(widget_box)
 ### Create plot objects and initialize empty plots
 
 ```python
-fig, ax = plt.subplots(1, 3, figsize=(6,4), sharey='row')
-
-line1, = ax[0].plot([], [])
-ax[0].set_xlabel('qc (MPa)')
-ax[0].set_ylabel('depth (m)')
-ax[0].grid(True)
-ax[0].invert_yaxis()
-
-line2, = ax[1].plot([], [])
-ax[1].set_xlabel('fs (MPa)')
-ax[1].grid(True)
-ax[1].invert_yaxis()
-
-line3, = ax[2].plot([], [])
-ax[2].set_xlabel('u2 (MPa)')
-ax[2].grid(True)
-ax[2].invert_yaxis()
-
-fig.tight_layout()
+plot_widget = widgets.Output()
+with plot_widget:
+    fig, ax = plt.subplots(1, 3, figsize=(6,4), sharey='row')
+    line1, = ax[0].plot([], [])
+    ax[0].set_xlabel('qc (MPa)')
+    ax[0].set_ylabel('depth (m)')
+    ax[0].grid(True)
+    ax[0].invert_yaxis()
+    line2, = ax[1].plot([], [])
+    ax[1].set_xlabel('fs (MPa)')
+    ax[1].grid(True)
+    ax[1].invert_yaxis()
+    line3, = ax[2].plot([], [])
+    ax[2].set_xlabel('u2 (MPa)')
+    ax[2].grid(True)
+    ax[2].invert_yaxis()
+    fig.tight_layout()
+    plt.show(fig)
 ```
 
 ### Create empty metadata_widget. This widget will get populated when a CPT test is selected
 
 ```python
 metadata_widget = widgets.HTML(value='')
-display(metadata_widget)
 ```
 
 ### Define function for populating test_widget when a user selects a site from the site_widget dropdown
@@ -159,69 +159,68 @@ If a site is selected, a SQL query is made on all of the CPT tests for that site
 
 ```python
 def on_site_widget_change(change):
-   line1.set_xdata([])
-   line1.set_ydata([])
-   line2.set_xdata([])
-   line2.set_ydata([])
-   line3.set_xdata([])
-   line3.set_ydata([])
-   metadata_widget.value=''
-   if(change['new']==-1):
-       test_widget.options = [('Select a test', -1)]
-       test_widget.disabled = True
-   else:
-       test_options = [('Select a test', -1)]
-       sql = 'SELECT DISTINCT TEST.TEST_ID, TEST.TEST_NAME FROM TEST INNER JOIN SCPG ON TEST.TEST_ID = SCPG.TEST_ID WHERE TEST.SITE_ID = ' + str(change['new'])
-       test_df = pd.read_sql_query(sql,cnx)
-       test_df.set_index('TEST_ID',inplace=True)
-       test_df.sort_values(by='TEST_NAME',inplace=True)
-       for key, value in test_df['TEST_NAME'].to_dict().items():
-           test_options.append((value, key))
-       test_widget.options = test_options
-       test_widget.disabled = False
+   ax[0].lines.clear()
+    ax[1].lines.clear()
+    ax[2].lines.clear()
+    metadata_widget.value=''
+    if(change['new']==-1):
+        test_widget.options = [('Select a test', -1)]
+        test_widget.disabled = True
+    else:
+        test_options = [('Select a test', -1)]
+        sql = 'SELECT DISTINCT TEST.TEST_ID, TEST.TEST_NAME FROM TEST INNER JOIN SCPG ON TEST.TEST_ID = SCPG.TEST_ID WHERE TEST.SITE_ID = ' + str(change['new'])
+        test_df = ngl.read_sql(sql)
+        test_df.set_index('TEST_ID',inplace=True)
+        test_df.sort_values(by='TEST_NAME',inplace=True)
+        for key, value in test_df['TEST_NAME'].to_dict().items():
+            test_options.append((value, key))
+        test_widget.options = test_options
+        test_widget.disabled = False
+    return
 ```
 
 ### Define function for querying CPT data and metadata when a user selects a CPT test
 ```python
 def on_test_widget_change(change):
-   if(change['new']!=-1):
-       sql = 'SELECT SCPT.SCPT_DPTH, SCPT.SCPT_RES, SCPT.SCPT_FRES, SCPT.SCPT_PWP FROM SCPT INNER JOIN SCPG ON SCPT.SCPG_ID = SCPG.SCPG_ID WHERE SCPG.TEST_ID = ' + str(change['new'])
-       scpt_df = pd.read_sql_query(sql,cnx)
-       line1.set_xdata(scpt_df['SCPT_RES'].values)
-       line1.set_ydata(scpt_df['SCPT_DPTH'].values)
-       line2.set_xdata(scpt_df['SCPT_FRES'].values)
-       line2.set_ydata(scpt_df['SCPT_DPTH'].values)
-       line3.set_xdata(scpt_df['SCPT_PWP'].values)
-       line3.set_ydata(scpt_df['SCPT_DPTH'].values)
-       for a in ax:
-           a.relim()
-           a.autoscale_view(True)
-       fig.canvas.draw()
-       sql = 'SELECT SCPG.SCPG_CSA, SCPG.SCPG_RATE, SCPG.SCPG_CREW, SCPG.SCPG_METH, SCPG.SCPG_STAR, '
-       sql += 'SCPG.SCPG_ENDD, SCPG.SCPG_PWP, SCPG.SCPG_REM FROM SCPG WHERE SCPG.TEST_ID = ' + str(change['new'])
-       scpg_df = pd.read_sql_query(sql,cnx)
-       metadata = "<strong>CPT Test Metadata</strong><br>"
-       metadata += "Cone area = " + str(scpg_df['SCPG_CSA'].values[0]) + ' cm<sup>2</sup><br>'
-       metadata += "Push rate = " + str(scpg_df['SCPG_RATE'].values[0]) + ' cm/s<br>'
-       metadata += "Crew = " + str(scpg_df['SCPG_CREW'].values[0]) + '<br>'
-       metadata += "Method = " + str(scpg_df['SCPG_METH'].values[0]) + '<br>'
-       metadata += "Start date = " + str(scpg_df['SCPG_STAR'].values[0]) + '<br>'
-       metadata += "End date = " + str(scpg_df['SCPG_ENDD'].values[0]) + '<br>'
-       metadata += "Position of pore pressure measurement = " + str(scpg_df['SCPG_PWP'].values[0]) + '<br>'
-       metadata += "Remarks = " + str(scpg_df['SCPG_REM'].values[0]) + '<br>'
-       metadata_widget.value = metadata
-   else:
-       line1.set_xdata([])
-       line1.set_ydata([])
-       line2.set_xdata([])
-       line2.set_ydata([])
-       line3.set_xdata([])
-       line3.set_ydata([])
-       metadata_widget.value=''
+   ax[0].lines.clear()
+    ax[1].lines.clear()
+    ax[2].lines.clear()
+    if(change['new']!=-1):
+        sql = 'SELECT SCPT.SCPT_DPTH, SCPT.SCPT_RES, SCPT.SCPT_FRES, SCPT.SCPT_PWP FROM SCPT INNER JOIN SCPG ON SCPT.SCPG_ID = SCPG.SCPG_ID WHERE SCPG.TEST_ID = ' + str(change['new'])
+        scpt_df = ngl.read_sql(sql)
+        line1, = ax[0].plot(scpt_df['SCPT_RES'].values,scpt_df['SCPT_DPTH'].values, c="C0")
+        line2, = ax[1].plot(scpt_df['SCPT_FRES'].values,scpt_df['SCPT_DPTH'].values, c="C0")
+        line3, = ax[2].plot(scpt_df['SCPT_PWP'].values,scpt_df['SCPT_DPTH'].values, c="C0")
+        for a in ax:
+            a.relim()
+            a.autoscale_view(True)
+        fig.canvas.draw()
+        
+        sql = 'SELECT SCPG.SCPG_CSA, SCPG.SCPG_RATE, SCPG.SCPG_CREW, SCPG.SCPG_METH, SCPG.SCPG_STAR, '
+        sql += 'SCPG.SCPG_ENDD, SCPG.SCPG_PWP, SCPG.SCPG_REM FROM SCPG WHERE SCPG.TEST_ID = ' + str(change['new'])
+        scpg_df = ngl.read_sql(sql)
+        metadata = "<strong>CPT Test Metadata</strong><br>"
+        metadata += "Cone area = " + str(scpg_df['SCPG_CSA'].values[0]) + ' cm<sup>2</sup><br>'
+        metadata += "Push rate = " + str(scpg_df['SCPG_RATE'].values[0]) + ' cm/s<br>'
+        metadata += "Crew = " + str(scpg_df['SCPG_CREW'].values[0]) + '<br>'
+        metadata += "Method = " + str(scpg_df['SCPG_METH'].values[0]) + '<br>'
+        metadata += "Start date = " + str(scpg_df['SCPG_STAR'].values[0]) + '<br>'
+        metadata += "End date = " + str(scpg_df['SCPG_ENDD'].values[0]) + '<br>'
+        metadata += "Position of pore pressure measurement = " + str(scpg_df['SCPG_PWP'].values[0]) + '<br>'
+        metadata += "Remarks = " + str(scpg_df['SCPG_REM'].values[0]) + '<br>'
+        metadata_widget.value = metadata
+    else:
+        ax[0].lines.clear()
+        ax[1].lines.clear()
+        ax[2].lines.clear()
+        metadata_widget.value=''
+    return
 ```
 
 ### Use the ipywidgets 'observe' command to link widgets to appropriate functions on change
 ```python
 site_widget.observe(on_site_widget_change, names='value')
 test_widget.observe(on_test_widget_change, names='value')
+display(plot_widget)
+display(metadata_widget)
 ```
