@@ -96,15 +96,23 @@ Code
 This section describes the [Jupyter notebook](https://jupyter.designsafe-ci.org/user/name/notebooks/CommunityData/NGL/DesignSafe_Webinar_Oct2021.ipynb) available via DesignSafe. The code is broken into chunks with explanations of each section of code.
 
 
-### Connect to NGL Database
-1) import the ngl_db package and 
-2) create a connection object to ngl_db called cnx
-
+### Import ngl_db package
+1) import the ngl_db package and other required packages
 
 ```python
-import ngl_db
-
-cnx = ngl_db.connect()
+try:
+    %matplotlib widget
+except:
+    try:
+        %matplotlib notebook
+    except:
+        print("Falling back to '%matplotlib inline'")
+        
+import ipywidgets as widgets
+from matplotlib import pyplot as plt
+import numpy as np
+import designsafe_db.ngl_db as ngl
+import pandas as pd
 ```
 
 ### Query SITE Table Using Pandas
@@ -116,10 +124,8 @@ An easy way to query the database is to use the Pandas read_sql command, which q
 
 
 ```python
-import pandas as pd
-
 sql = "SELECT * FROM SITE"
-df = pd.read_sql(sql,cnx)
+df = ngl.read_sql(sql)
 df
 ```
 
@@ -131,7 +137,7 @@ This cell queries the TEST table looking for all TESTs with the same SITE_ID
 ```python
 site_id = 159
 sql = 'SELECT * FROM TEST where TEST.SITE_ID = "{}"'.format(site_id)
-TESTdf = pd.read_sql(sql,cnx)
+TESTdf = ngl.read_sql(sql)
 TESTdf
 ```
 
@@ -143,7 +149,7 @@ This cell queries the SCPG table for a single CPT test
 ```python
 test_id = TESTdf['TEST_ID'][1]
 sql = 'SELECT * FROM SCPG where SCPG.TEST_ID = "{}"'.format(test_id)
-SCPGdf = pd.read_sql(sql,cnx)
+SCPGdf = ngl.read_sql(sql)
 SCPGdf
 ```
 
@@ -153,13 +159,9 @@ This cell uses matplotlib to plot CPT data located in the SCPT table
 
 
 ```python
-%matplotlib notebook
-import matplotlib.pyplot as plt
-
-#get CPT data for a given SCPG_ID, and load into Pandas dataframe
 scpg_id = SCPGdf['SCPG_ID'][0]
 sql = 'SELECT * FROM SCPT where SCPT.SCPG_ID = "{}"'.format(scpg_id)
-SCPTdf = pd.read_sql(sql,cnx)
+SCPTdf = ngl.read_sql(sql)
 
 #plot cone tip resistance, friction resistance, and pore pressures
 fig,axs = plt.subplots(ncols=3, figsize=(7,6),sharey=True)
@@ -184,7 +186,7 @@ This cell extracts the depth to groundwater from the WATR table for the same TES
 ```python
 sql = 'SELECT * FROM WATR'
 sql += ' Where WATR.TEST_ID = "{}"'.format(test_id)
-waterdf = pd.read_sql(sql,cnx)
+waterdf = ngl.read_sql(sql)
 z_gwt = waterdf['WATR_DPTH'].values[0]
 waterdf
 ```
@@ -195,31 +197,24 @@ This cell puts everything together in one cell, and adds horizontal lines repres
 
 
 ```python
-import ngl_db
-import pandas as pd
-import matplotlib.pyplot as plt
-
-cnx = ngl_db.connect()
-
-#Get list of TESTs for given SITE_ID
 site_id = 159
 sql = 'SELECT * FROM TEST where TEST.SITE_ID = "{}"'.format(site_id)
-TESTdf = pd.read_sql(sql,cnx)
+TESTdf = ngl.read_sql(sql)
 
 #Get SCPG_ID for given TEST_ID
 test_id = TESTdf['TEST_ID'][1]
 sql = 'SELECT * FROM SCPG where SCPG.TEST_ID = "{}"'.format(test_id)
-SCPGdf = pd.read_sql(sql,cnx)
+SCPGdf = ngl.read_sql(sql)
 
 #get SCPT data for a given SCPG_ID, and load into Pandas dataframe
 scpg_id = SCPGdf['SCPG_ID'][0]
 sql = 'SELECT * FROM SCPT where SCPT.SCPG_ID = "{}"'.format(scpg_id)
-SCPTdf = pd.read_sql(sql,cnx)
+SCPTdf = ngl.read_sql(sql)
 
 #get WATR data for same TEST_ID
 sql = 'SELECT * FROM WATR'
 sql += ' Where WATR.TEST_ID = "{}"'.format(test_id)
-waterdf = pd.read_sql(sql,cnx)
+waterdf = ngl.read_sql(sql)
 z_gwt = waterdf['WATR_DPTH'].values[0]
 
 #plot cone tip resistance, friction resistance, and pore pressures, with horizontal line for GWT
@@ -249,15 +244,6 @@ sql += 'FROM SITE INNER JOIN TEST ON TEST.SITE_ID = SITE.SITE_ID '
 sql += 'INNER JOIN SCPG ON SCPG.TEST_ID = TEST.TEST_ID '
 sql += 'INNER JOIN WATR ON WATR.TEST_ID = TEST.TEST_ID'
 
-test_metadata = pd.read_sql(sql, cnx)
+test_metadata = ngl.read_sql(sql)
 test_metadata
-```
-
-
-### Close the connection
-Close the connection to the NGL database when you're done with your queries
-
-
-```python
-cnx.close()
 ```
