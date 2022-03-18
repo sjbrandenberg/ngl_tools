@@ -1,6 +1,6 @@
-# Vs (Invasive) Test Viewer
+# V<sub>S</sub> (Invasive) Test Viewer
 
-The Vs (Invasive) Test Viewer demonstrates the following:
+The V<sub>S</sub> (Invasive) Test Viewer demonstrates the following:
 
 1. Connecting to NGL database in DesignSafe
 2. Querying data from SITE, TEST, GINV, and GIND tables into Pandas dataframes
