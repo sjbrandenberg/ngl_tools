@@ -13,12 +13,9 @@ string called sql that queries all information from the SITE table, and creates 
 the results of the query.
 
 ```python
-import pandas as pd
-import ngl_db
-
-cnx = ngl_db.connect()
+import designsafe_db.ngl_db as ngl
 sql = "SELECT * FROM SITE"
-df = pd.read_sql(sql,cnx)
+df = ngl.read_sql(sql)
 df
 ```
 
@@ -61,10 +58,7 @@ This cell queries event information from the EVNT table and surface evidence of 
 | SITE_NAME |  Site name |
 
 ```python
-import pandas as pd
-import ngl_db
-
-cnx = ngl_db.connect()
+import designsafe_db.ngl_db as ngl
 
 sql = 'SELECT EVNT.EVNT_MAG, EVNT.EVNT_NM, EVNT.EVNT_YR, FLDM.FLDM_LAT, FLDM.FLDM_LON, FLDM.FLDM_SFEV, FLDM.FLDM_DESC '
 sql += 'FROM FLDO INNER JOIN FLDM on FLDO.FLDO_ID = FLDM.FLDO_ID '
@@ -72,7 +66,7 @@ sql += 'INNER JOIN EVNT ON EVNT.EVNT_ID = FLDO.EVNT_ID '
 sql += 'INNER JOIN SITE ON FLDO.SITE_ID = SITE.SITE_ID '
 sql += 'WHERE SITE_NAME = "Wildlife Array"'
 
-df = pd.read_sql_query(sql, cnx)
+df = ngl.read_sql(sql)
 pd.set_option('display.max_colwidth', 100)
 df
 ```
@@ -88,9 +82,7 @@ This query retrieves all cone penetration test data from the Wildlife liquefacti
 
 ```python  
 import pandas as pd
-import ngl_db
-
-cnx = ngl_db.connect()
+import designsafe_db.ngl_db as ngl
 
 command = 'SELECT TEST.TEST_ID, TEST.TEST_NAME, SCPT. SCPT_DPTH, SCPT.SCPT_RES, SCPT.SCPT_FRES FROM SCPT '
 command += 'INNER JOIN SCPG ON SCPT.SCPG_ID = SCPG.SCPG_ID '
@@ -98,7 +90,7 @@ command += 'INNER JOIN TEST ON TEST.TEST_ID = SCPG.TEST_ID '
 command += 'INNER JOIN SITE ON SITE.SITE_ID = TEST.SITE_ID '
 command += 'WHERE SITE.SITE_NAME = "Wildlife Array"'
 
-df = pd.read_sql_query(command, cnx)
+df = ngl.read_sql(command)
 pd.set_option('display.max_rows', 10)
 df
 ```
@@ -112,105 +104,24 @@ df
 This query demonstrates the MySQL COUNT function to return the number of cone penetration tests, boreholes, surface wave measurements, invasive shear wave velocity measurement, liquefaction observations, and non-liquefaction observations. Rather than querying directly to a Pandas dataframe, in this case we use the pymysql package to query the data, and subsequently assemble the count data into a Pandas dataframe for viewing.
 
 ```python
-import pymysql
+import designsafe_db.ngl_db as ngl
 import pandas as pd
-import ngl_db
 
-cnx = ngl_db.connect()
-cursor = cnx.cursor()
-command = 'SELECT COUNT(SCPG_ID) FROM SCPG'
-cursor.execute(command)
-count_cpt = cursor.fetchone()[0]
-command = 'SELECT COUNT(FLDM_ID) FROM FLDM WHERE FLDM_SFEV=1'
-cursor.execute(command)
-count_fldo_yes = cursor.fetchone()[0]
-command = 'SELECT COUNT(FLDM_ID) FROM FLDM WHERE FLDM_SFEV=0'
-cursor.execute(command)
-count_fldo_no = cursor.fetchone()[0]
-command = 'SELECT COUNT(BORH_ID) FROM BORH'
-cursor.execute(command)
-count_borehole = cursor.fetchone()[0]
-command = 'SELECT COUNT(GSWG_ID) FROM GSWG'
-cursor.execute(command)
-count_swave = cursor.fetchone()[0]
-command = 'SELECT COUNT(GINV_ID) FROM GINV'
-cursor.execute(command)
-count_vs = cursor.fetchone()[0]
-df = pd.DataFrame(data = [count_cpt, count_borehole, count_swave, count_vs, count_fldo_yes, count_fldo_no], index=['CPT Soundings','Boreholes','Surface Wave Measurements','Invasive Vs Profiles','Liquefaction Observations','Non-Liquefaction Observations'], columns=['Total'])
-pd.set_option('display.max_rows', 10)
-df
+command = 'SELECT (SELECT COUNT(SCPG_ID) FROM SCPG) as "CPT Soundings", '
+command += '(SELECT COUNT(BORH_ID) FROM BORH) as "Boreholes", '
+command += '(SELECT COUNT(GSWG_ID) FROM GSWG) as "Surface Wave Measurements", '
+command += '(SELECT COUNT(GINV_ID) FROM GINV) as "Invasive VS Measurements", '
+command += '(SELECT COUNT(FLDM_ID) FROM FLDM WHERE FLDM_SFEV=1) as "Liquefaction Observations", '
+command += '(SELECT COUNT(FLDM_ID) FROM FLDM WHERE FLDM_SFEV=0) as "Non-Liquefaction Observations"'
+
+count = ngl.read_sql(command).T
+count.columns=["Count"]
+count
 ```
 
 ![Screenshot of counts of data quantities in various tables.](images/Counts1.png)
 
 **Figure 5.** Screenshot of counts of data quantities in various tables.
-  
-## Query number of data entries in various tables, including indication of review status
-
-This query builds upon the previous query by adding an indication of whether the data quantity has been reviewed. Data in the NGL database is submitted for review by users, and subsequently reviewed by members of the database working group to check the data against published sources, identify errors, and ensure data entry completeness.
-
-```python
-# Imports libraries and modules
-import pymysql
-import pandas as pd
-import ngl_db
-
-# Establishes connection to the NGL database
-cnx = ngl_db.connect()
-cursor = cnx.cursor()
-
-# Get all data, reviewed or not
-command = 'SELECT COUNT(SCPG_ID) FROM SCPG'
-cursor.execute(command)
-count_cpt = cursor.fetchone()[0]
-command = 'SELECT COUNT(FLDM_ID) FROM FLDM WHERE FLDM_SFEV=1'
-cursor.execute(command)
-count_fldo_yes = cursor.fetchone()[0]
-command = 'SELECT COUNT(FLDM_ID) FROM FLDM WHERE FLDM_SFEV=0'
-cursor.execute(command)
-count_fldo_no = cursor.fetchone()[0]
-command = 'SELECT COUNT(BORH_ID) FROM BORH'
-cursor.execute(command)
-count_borehole = cursor.fetchone()[0]
-command = 'SELECT COUNT(GSWG_ID) FROM GSWG'
-cursor.execute(command)
-count_swave = cursor.fetchone()[0]
-command = 'SELECT COUNT(GINV_ID) FROM GINV'
-cursor.execute(command)
-count_vs = cursor.fetchone()[0]
-
-total = [count_cpt, count_borehole, count_swave, count_vs, count_fldo_yes, count_fldo_no]
-
-command = 'SELECT COUNT(SCPG_ID) FROM SCPG INNER JOIN TEST on SCPG.TEST_ID = TEST.TEST_ID WHERE TEST.TEST_REVW = 1'
-cursor.execute(command)
-count_cpt = cursor.fetchone()[0]
-command = 'SELECT COUNT(FLDM_ID) FROM FLDM INNER JOIN FLDO on FLDM.FLDO_ID = FLDO.FLDO_ID WHERE FLDM.FLDM_SFEV=1 AND FLDO.FLDO_REVW=1'
-cursor.execute(command)
-count_fldo_yes = cursor.fetchone()[0]
-command = 'SELECT COUNT(FLDM_ID) FROM FLDM INNER JOIN FLDO on FLDM.FLDO_ID = FLDO.FLDO_ID WHERE FLDM.FLDM_SFEV=0 and FLDO.FLDO_REVW=1'
-cursor.execute(command)
-count_fldo_no = cursor.fetchone()[0]
-command = 'SELECT COUNT(BORH_ID) FROM BORH INNER JOIN TEST on BORH.TEST_ID = TEST.TEST_ID WHERE TEST.TEST_REVW = 1'
-cursor.execute(command)
-count_borehole = cursor.fetchone()[0]
-command = 'SELECT COUNT(GSWG_ID) FROM GSWG INNER JOIN TEST on GSWG.TEST_ID = TEST.TEST_ID WHERE TEST.TEST_REVW = 1'
-cursor.execute(command)
-count_swave = cursor.fetchone()[0]
-command = 'SELECT COUNT(GINV_ID) FROM GINV INNER JOIN TEST on GINV.TEST_ID = TEST.TEST_ID WHERE TEST.TEST_REVW = 1'
-cursor.execute(command)
-count_vs = cursor.fetchone()[0]
-
-reviewed = [count_cpt, count_borehole, count_swave, count_vs, count_fldo_yes, count_fldo_no]
-
-quantities = ['CPT soundings', 'Boreholes', 'Surface Wave Measurements', 'Invasive Vs Profiles', 'Liquefaction Observations', 'Non-Liquefaction Observations']
-
-df2 = pd.DataFrame({'Quantity': quantities, 'Total': total, 'Reviewed': reviewed})
-df2
-```
-
-![Screenshot of counts of data quantities in various tables, plus indication of review status.](images/Counts2.png)
-
-**Figure 6.** Screenshot of counts of data quantities in various tables, plus indication of review status.
 
 ## Query list of table names
 
@@ -218,18 +129,16 @@ The cell below queries the names of all of the tables in the NGL database into a
 
 ```python
 import pandas as pd
-import ngl_db
-
-cnx = ngl_db.connect()
+import designsafe_db.ngl_db as ngl
 
 sql = 'show tables'
-table_names = pd.read_sql_query(sql, cnx)
+table_names = ngl.read_sql(sql)
 pd.set_option('display.max_rows', len(table_names))
 table_names
 ```
 ![Screenshot of list of tables in NGL database.](images/Tables.png)
 
-**Figure 7.** Screenshot of list of tables in NGL database.
+**Figure 6.** Screenshot of list of tables in NGL database.
     
 ## Query schema for BORH table
 
@@ -250,16 +159,14 @@ The cell below uses the SHOW FULL COLUMNS command to display the fields in the B
 
 ```python
 import pandas as pd
-import ngl_db
-
-cnx = ngl_db.connect()
+import designsafe_db.ngl_db as ngl
 
 sql = 'SHOW FULL COLUMNS FROM BORH'
-bohr_desc = pd.read_sql_query(sql, cnx)
+bohr_desc = ngl.read_sql(sql)
 pd.set_option('display.max_rows', len(bohr_desc))
 bohr_desc
 ```
 
 ![Screenshot of fields contained in BORH table.](images/borh_fields.png)
 
-**Figure 8.** Screenshot of fields contained in BORH table. 
+**Figure 7.** Screenshot of fields contained in BORH table. 
