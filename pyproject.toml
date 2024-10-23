@@ -11,6 +11,10 @@ authors = [
 license = "LICENSE.txt"
 readme = "README.md"
 
+packages = [
+    {include = "ngl_tools", from = "src"},
+]
+
 [tool.poetry.dependencies]
 python = "^3.8"
 numpy = "^1.22"
