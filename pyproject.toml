@@ -7,7 +7,7 @@ license = "LICENSE.txt"
 readme = "README.md"
 
 packages = [
-    {include = "smt", from = "src"},
+    {include = "ngl_tools", from = "src"},
 ]
 
 [tool.poetry.dependencies]
