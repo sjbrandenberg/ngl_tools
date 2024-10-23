@@ -121,7 +121,7 @@ def convolve(qt, zprime, C1, C2, z50ref, m50, mq, mz):
 
     inputs:
     qt = Numpy array of cone tip resistance values.
-    zprime = Dimensionless depth between a given depth and the cone tip. zprime = (z - z_tip) / dc
+    zprime = Dimensionless depth between a given depth and the cone tip. zprime = (z - z_tip) / dc.
     dc = cone diameter
     C1 = A filter parameter used to define the w1 filter.
     C2 = A filter parameter that is 0.8 for points above the cone tip, and 1.0 below the cone tip.
