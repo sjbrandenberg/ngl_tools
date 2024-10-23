@@ -2,7 +2,12 @@
 name = "ngl_tools"
 version = "0.0.1"
 description = "A collection of software tools developed by the Next Generation Liquefaction modeling teams"
-authors = ["Scott J. Brandenberg", "Kenneth L. Hudson", "Kristin J. Ulmer", "Paolo Zimmaro"]
+authors = [
+    "Scott J. Brandenberg", 
+    "Kenneth L. Hudson", 
+    "Kristin J. Ulmer", 
+    "Paolo Zimmaro"
+]
 license = "LICENSE.txt"
 readme = "README.md"
 
