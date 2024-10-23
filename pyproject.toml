@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "ngl_tools"
+version = "0.0.1"
+description = "A collection of software tools developed by the Next Generation Liquefaction modeling teams"
+authors = ["Scott J. Brandenberg", "Kenneth L. Hudson", "Kristin J. Ulmer", "Paolo Zimmaro"]
+license = "LICENSE.txt"
+readme = "README.md"
+
+packages = [
+    {include = "smt", from = "src"},
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+numpy = "^1.22"
+scipy = "^1.8"
+
+[tool.poetry.group.test.dependencies]
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.3"
+
+[build-system]
+requires = ["poetry-core","numpy"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.build]
+generate-setup-file = false
