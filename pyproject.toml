@@ -18,6 +18,7 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.8"
 numpy = "^1.22"
+sklearn = "^1.2"
 
 [tool.poetry.group.test.dependencies]
 
