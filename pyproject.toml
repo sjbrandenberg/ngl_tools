@@ -18,7 +18,6 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.8"
 numpy = "^1.22"
-scikit-learn = "^1.2"
 
 [build-system]
 requires = ["poetry-core","numpy"]
