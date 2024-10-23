@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/ngl_tools
+      url: https://pypi.org/p/ngl_tools/
     permissions:
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     steps:
@@ -28,11 +28,21 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: 3.9
-      - name: Poetry image
-        uses: abatilo/actions-poetry@v2
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python - -y
+
+      - name: Update PATH
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Update Poetry configuration
+        run: poetry config virtualenvs.create false
+        
       - name: Install the project dependencies
-        run: poetry install
+        run: poetry install --sync --no-interaction
+        
       - name: Build package
         run: poetry build
+        
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
