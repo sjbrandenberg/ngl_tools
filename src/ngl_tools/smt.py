@@ -26,7 +26,7 @@ def cpt_inverse_filter(**kwargs):
     mq = Scalar filter parameter for computing z50. Default = 2.0.
     mz = Scalar filter parameter for computing w2. Default = 3.0
     dc = Scalar cone diameter in same units as z. Default = 0.03568 m.
-    n_iter = Integer maximum number of iterations. Default = 500
+    n_iter = Integer maximum number of iterations. Default = 500.
     remove_interface = Boolean indicating whether to apply the layer interface correction. Default = True.
     rate_lim = Scalar limiting dimensionless rate change in qt for defining an interface. Default = 0.1. Only applies when remove_interface = True.
     smooth = Boolean indicating whether to apply a smoothing window to inverted data. Default = True.
