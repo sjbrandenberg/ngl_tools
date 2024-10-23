@@ -272,7 +272,7 @@ def cpt_layering(qc1Ncs, Ic, depth, dGWT=0, num_layers=None, tknob=0.5):
             knn_graph[i][i - 1] = 1.0
         if i < len(depth) - 1:
             knn_graph[i + 1][i] = 1.0
-            knn_graph[i][i + 1] = 1.0
+            knn_graph[i][i + 1] = 1.00
 
     ##If there is not a specified number of layers input to the function, find the optimal number of layers, otherwise use the input number of layers
     if num_layers == None:
