@@ -56,12 +56,6 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: 3.9
-      - name: Update Version Number
-        run: |
-          OLD_VERSION=$(grep ^version pyproject.toml | cut -d '"' -f 2)
-          OLD_VERSION="\"$OLD_VERSION\""
-          NEW_VERSION="\"$GITHUB_REF_NAME\""
-          sed -i "s+version = $OLD_VERSION+version = $NEW_VERSION+g" pyproject.toml
       - name: Poetry image
         uses: abatilo/actions-poetry@v2
       - name: Install the project dependencies
