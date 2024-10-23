@@ -20,11 +20,6 @@ python = "^3.8"
 numpy = "^1.22"
 sklearn = "^1.2"
 
-[tool.poetry.group.test.dependencies]
-
-[tool.poetry.group.dev.dependencies]
-pytest = "^7.4.3"
-
 [build-system]
 requires = ["poetry-core","numpy"]
 build-backend = "poetry.core.masonry.api"
