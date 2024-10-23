@@ -137,22 +137,22 @@ The supported modeling team has developed a Python code that contains the follow
   Qtn = Numpy array of dimensionless cone tip resistance values. Qtn = (qt - sigmav) / pa * (pa / sigmavp) ** n >= 0.0001  
   Fr = Numpy array of dimensionless cone sleeve friction values. Fr = fs / (qt - sigmav) * 100 >= 0.001  
 
- ### get_qc1N_qc1Ncs(qt, fs, sigmav, sigmavp, FC, pa = 101.325, maxiter = 30):
+ ### get_qc1N_qc1Ncs(qt, fs, sigmav, sigmavp, FC, pa = 101.325, maxiter = 30)
    
-    This function computes qc1N, and qc1Ncs. Iterations are required to solve for these parameters.
-    The equations are implicit because the stress normalization exponent depends on the fines correction.
+  This function computes qc1N, and qc1Ncs. Iterations are required to solve for these parameters.
+  The equations are implicit because the stress normalization exponent depends on the fines correction.
 
-    Inputs:
+  Inputs:
 
-    qt = Numpy array of cone tip resistance values.  
-    fs = Numpy array of cone sleeve friction values.  
-    sigmav = Numpy array of vertical total stress values.  
-    sigmavp = Numpy array of vertical effective stress values.  
-    FC = Numpy array of fines content values in percent.  
-    pa = Scalar value of atmospheric pressure. Optional. Default = 101.325 kPa  
-    maxiter = Scaler value of the maximum number of iterations. Optional. Default = 30.  
+  qt = Numpy array of cone tip resistance values.  
+  fs = Numpy array of cone sleeve friction values.  
+  sigmav = Numpy array of vertical total stress values.  
+  sigmavp = Numpy array of vertical effective stress values.  
+  FC = Numpy array of fines content values in percent.  
+  pa = Scalar value of atmospheric pressure. Optional. Default = 101.325 kPa  
+  maxiter = Scaler value of the maximum number of iterations. Optional. Default = 30.  
 
-    Outputs:  
+  Outputs:  
 
-    qc1N = Overburden corrected tip resistance, where exponent for overburden correction is a function of qc1Ncs.  
-    qc1Ncs = Overburden and fines-corrected tip resistance.  
+  qc1N = Overburden corrected tip resistance, where exponent for overburden correction is a function of qc1Ncs.  
+  qc1Ncs = Overburden and fines-corrected tip resistance.  
