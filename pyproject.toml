@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ngl_tools"
-version = "0.0.2"
+version = "0.0.3"
 description = "A collection of software tools developed by the Next Generation Liquefaction modeling teams"
 authors = [
     "Scott J. Brandenberg", 
