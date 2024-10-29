@@ -8,7 +8,7 @@ authors:
   - family-names: "Brandenberg"
     given-names: "Scott J."
 title: "Next Generation Liquefaction Software Tools, ngl_tools"
-version: 0.0.3
+version: 0.0.2
 identifiers:
   - type: doi
     value: 10.5281/zenodo.14004847
