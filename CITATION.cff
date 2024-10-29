@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "Hudson"
+    given-names: "Kenneth L."
+  - family-names: "Ulmer"
+    given-names: "Kristin J."
+  - family-names: "Brandenberg"
+    given-names: "Scott J."
+title: "Next Generation Liquefaction Software Tools, ngl_tools"
+version: 0.0.3
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.14004847
+date-released: 2024-10-28
