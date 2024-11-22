@@ -11,8 +11,8 @@ def cpt_inverse_filter(**kwargs):
     Cone Penetration Testing 2018 - Hicks, Pisano & Peuchen (Eds). 2018 Delft University of Technology, The Netherlands, ISBN 978-1-138-58449-5."
 
     Description of cpt_inverse_filter command. Variables enclosed in <> are optional.
-    Method 'layer_correct' returns depth and qt_inv, where qt_inv is the corrected cone tip resistance.
-    layer_correct(qt=$qt, z=$z, <fs=$fs, sigmav=$sigmav, sigmavp=$sigmavp>, <z50ref=$z50ref>, <m50=$m50>, <mq=$mq>, <mz=$mz>, <dc=$dc>,
+    Method 'cpt_inverse_filter' returns depth and qt_inv, where qt_inv is the corrected cone tip resistance.
+    cpt_inverse_filter(qt=$qt, z=$z, <fs=$fs, sigmav=$sigmav, sigmavp=$sigmavp>, <z50ref=$z50ref>, <m50=$m50>, <mq=$mq>, <mz=$mz>, <dc=$dc>,
     <N=$N>, <remove_interface=$remove_interface>, <rate_lim=$rate_lim>, <smooth=True/False>, <tol=$tol>,
     <low_pass=True/False>)
 
