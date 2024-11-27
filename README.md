@@ -11,10 +11,11 @@ The supported modeling team has developed a Python code that contains the follow
   Boulanger, R.W. and DeJong, J.T. (2018). 'Inverse filtering procedure to correct cone penetration data for thin-layer and transition effects.' 
   Cone Penetration Testing 2018 - Hicks, Pisano & Peuchen (Eds). 2018 Delft University of Technology, The Netherlands, ISBN 978-1-138-58449-5."
   
-  Description of cpt_inverse_filter command. Variables enclosed in <> are optional.  
-  Method 'layer_correct' returns depth and qt_inv, where qt_inv is the corrected cone tip resistance.  
+  Description of cpt_inverse_filter command. Variables enclosed in <> are optional.  If multiple variables are enclosed in <>, those variables either must all be excluded or all be included.
+  
+  Method 'cpt_inverse_filter' returns depth and qt_inv, where qt_inv is the corrected cone tip resistance.  
     
-  layer_correct(qt=$qt, z=$z, <fs=$fs, sigmav=$sigmav, sigmavp=$sigmavp>, <z50ref=$z50ref>, <m50=$m50>, <mq=$mq>, <mz=$mz>, <dc=$dc>,
+  cpt_inverse_filter(qt=$qt, z=$z, <fs=$fs, sigmav=$sigmav, sigmavp=$sigmavp>, <z50ref=$z50ref>, <m50=$m50>, <mq=$mq>, <mz=$mz>, <dc=$dc>,
   <N=$N>, <remove_interface=$remove_interface>, <rate_lim=$rate_lim>, <smooth=True/False>, <tol=$tol>,
   <low_pass=True/False>)  
   
@@ -117,8 +118,8 @@ The supported modeling team has developed a Python code that contains the follow
   FC = Fines content in percent. Same dimensions as Ic (either scalar valued or Numpy array).
   
 ### get_Ic_Qtn_Fr(qt, fs, sigmav, sigmavp, pa = 101.25, maxiter = 30)  
-  This function computes Ic, Qtn, Fr, qc1N, and qc1Ncs. Iterations are required to solve for
-  these parameters because relationships among Ic, Qtn, Fr, qc1N, and qc1Ncs are implicit.  
+  This function computes Ic, Qtn, and Fr. Iterations are required to solve for
+  these parameters because relationships among Ic, Qtn, and Fr are implicit.  
   
   Inputs:  
   
