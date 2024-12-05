@@ -110,7 +110,7 @@ def cpt_inverse_filter(**kwargs):
         F_inv[F_inv < 0.001] = 0.001
         fs_inv = F_inv/100*(qtrial-sigmav)
         fs_inv[fs_inv < 0.01] = 0.01
-        return z, qtrial, fs_inv
+        return qtrial, fs_inv, Ic_inv
             
     return z,qtrial
 
@@ -232,7 +232,7 @@ def smooth_function(y, span):
         smooth_y[i] = np.mean(y[i-sub_span:i+sub_span+1])
     return smooth_y 
 
-def cpt_layering(qc1Ncs, Ic, depth, dGWT=0, num_layers=None, tknob=0.5):
+def cpt_layering(qc1Ncs, Ic, depth, **kwargs):
     """
     A function that uses the agglomerative clustering algorithm by Hudson et al. (2023) to automatically
     identify spatially contiguous soil layers with similar qc1Ncs and Ic values.
@@ -247,14 +247,24 @@ def cpt_layering(qc1Ncs, Ic, depth, dGWT=0, num_layers=None, tknob=0.5):
     depth = Numpy array of depth values.
     dGWT = Scalar valued depth to groundwater.
     num_layers = Integer number of layers. Optional. Default = None, in which case the optimal number of layers is selected automatically.
-    tknob = Scalar valued constant used to define layer thickness parameter in cost function. Optional. Default = 0.5.
-
+    tref = Scalar valued constant used to define layer thickness parameter in cost function. Optional. Default = 0.5.
+    wD = Scalar valued weight factor for distortion score portion of cost function. Optional. Default = 1.0.
+    wT = Scalar valued weight factor for layer thickness portion of cost function. Optional. Default = 1.0.
+    
     Outputs:
     ztop = Numpy array of depths to the tops of the layers.
     zbot = Numpy array of depths to the bottoms of the layers.
     qc1Ncs_lay = Numpy array of qc1Ncs values for the layers.
     Ic_lay = Numpy array of soil behavior type index values for the layers.
     """
+    ##Read keyword arguments
+    dGWT = kwargs.get('dGWT', 0.0)
+    Nmin = kwargs.get('Nmin', 1)
+    Nmax = kwargs.get('Nmax', None)
+    tref = kwargs.get('tref', 0.5)
+    wD = kwargs.get('wD', 1)
+    wT = kwargs.get('wT', 1)
+
     ##Standardize (normalize, "norm") the qc1Ncs and Ic values
     qc1Ncs_norm = (qc1Ncs - np.mean(qc1Ncs)) / np.std(qc1Ncs)
     Ic_norm = (Ic - np.mean(Ic)) / np.std(Ic)
@@ -272,88 +282,67 @@ def cpt_layering(qc1Ncs, Ic, depth, dGWT=0, num_layers=None, tknob=0.5):
             knn_graph[i][i - 1] = 1.0
         if i < len(depth) - 1:
             knn_graph[i + 1][i] = 1.0
-            knn_graph[i][i + 1] = 1.00
+            knn_graph[i][i + 1] = 1.0
+    if(Nmax == None):
+        Nmax = len(depth)
 
-    ##If there is not a specified number of layers input to the function, find the optimal number of layers, otherwise use the input number of layers
-    if num_layers == None:
-        distk = []
-        kmin = 4
-        kmax = np.min([50, len(depth)])
-        for k in range(kmin, kmax):
-            model = AgglomerativeClustering(
-                linkage="ward", connectivity=knn_graph, n_clusters=k
-            )
+    # Compute distortion score for a single cluster to use as baseline for normalization
+    JD1 = np.sum(qc1Ncs_norm**2 + Ic_norm**2)
+    tavg = np.max(depth) - np.min(depth)
+    JT1 = 0.2 * (tref / tavg) ** 3
+    cost = wD * JD1 / JD1 + wT * JT1
 
-            model.fit(X)
-            labels = model.labels_
-            distortion = 0
-            for label in np.unique(labels):
-                cluster = X[labels == label]
-                center = cluster.mean(axis=0)
-                center = np.array([center])
-                distances = pairwise_distances(cluster, center, metric="euclidean")
-                distances = distances**2
-                distortion += distances.sum()
-            distk.append(distortion)
-
+    for k in np.arange(Nmin, Nmax + 1):
         model = AgglomerativeClustering(
-            linkage="ward", connectivity=knn_graph, n_clusters=1
+            linkage="ward", connectivity=knn_graph, n_clusters=k
         )
+
         model.fit(X)
         labels = model.labels_
-        distortion = 0
+        JD = 0
+        n_clusters = Nmin
         for label in np.unique(labels):
             cluster = X[labels == label]
             center = cluster.mean(axis=0)
             center = np.array([center])
             distances = pairwise_distances(cluster, center, metric="euclidean")
             distances = distances**2
-            distortion += distances.sum()
-        distk1 = distortion
-        dist_norm = distk / distk1
-        tavg = (np.max(depth)) / np.arange(kmin, kmax)
-        cost2 = 0.2 * (tknob / tavg) ** 3
+            JD += distances.sum()
+        tavg = (np.max(depth) - np.min(depth)) / k
+        JT = 0.2 * (tref / tavg) ** 3
+        if(k==Nmin):
+            cost = (wD * JD / JD1 + wT * JT)
+        elif((wD * JD / JD1 + wT * JT) < cost):
+            cost = (wD * JD / JD1 + wT * JT)
+        else:
+            ## Model has converged. Previous number of layers was the best.
+            n_clusters = k-1
+            break
 
-        model = AgglomerativeClustering(
-            linkage="ward",
-            connectivity=knn_graph,
-            n_clusters=np.arange(kmin, kmax)[np.argmin(dist_norm + cost2)],
-        )
-
-        model.fit(X)
-    else:
-        model = AgglomerativeClustering(
-            linkage="ward", connectivity=knn_graph, n_clusters=num_layers
-        )
-        model.fit(X)
-
+    model = AgglomerativeClustering(
+        linkage="ward", connectivity=knn_graph, n_clusters=n_clusters
+    )
+    model.fit(X)
     labels = model.labels_
-    ztop = np.zeros(len(np.where(np.diff(labels) != 0)[0]) + 1)
-    zbot = np.zeros(len(np.where(np.diff(labels) != 0)[0]) + 1)
-    Ic_lay = np.zeros(len(np.where(np.diff(labels) != 0)[0]) + 1)
-    qc1Ncs_lay = np.zeros(len(np.where(np.diff(labels) != 0)[0]) + 1)
-
-    ztop[0] = depth[0]
-    zbot[0] = depth[np.where(np.diff(labels) != 0)[0][0]]
-    Ic_lay[0] = np.mean(Ic[0 : np.where(np.diff(labels) != 0)[0][0]])
-    qc1Ncs_lay[0] = np.mean(qc1Ncs[0 : np.where(np.diff(labels) != 0)[0][0]])
-    ztop[-1] = depth[np.where(np.diff(labels) != 0)[0][-1]]
-    zbot[-1] = depth[-1]
-    Ic_lay[-1] = np.mean(Ic[np.where(np.diff(labels) != 0)[0][-1] : -1])
-    qc1Ncs_lay[-1] = np.mean(qc1Ncs[np.where(np.diff(labels) != 0)[0][-1] : -1])
-    for lay in range(1, len(zbot) - 1):
-        lay_indx1 = np.where(np.diff(labels) != 0)[0][lay - 1]
-        lay_indx2 = np.where(np.diff(labels) != 0)[0][lay]
-        ztop[lay] = depth[lay_indx1]
-        zbot[lay] = depth[lay_indx2]
-        Ic_lay[lay] = np.percentile(Ic[lay_indx1:lay_indx2], 50)
-        qc1Ncs_lay[lay] = np.percentile(qc1Ncs[lay_indx1:lay_indx2], 50)
-    if ztop[0] == ztop[1]:
-        ztop = np.delete(ztop, 0)
-        zbot = np.delete(zbot, 0)
-        Ic_lay = np.delete(Ic_lay, 0)
-        qc1Ncs_lay = np.delete(qc1Ncs_lay, 0)
-
+    unique_labels = np.unique(labels)
+    ztop = np.zeros(n_clusters)
+    zbot = np.zeros(n_clusters)
+    qc1Ncs_lay = np.zeros(n_clusters)
+    Ic_lay = np.zeros(n_clusters)
+    for i in range(n_clusters):
+        ztop[i] = depth[labels == unique_labels[i]][0]
+        zbot[i] = depth[labels == unique_labels[i]][-1]
+        qc1Ncs_lay[i] = np.mean(qc1Ncs[labels == unique_labels[i]])
+        Ic_lay[i] = np.mean(Ic[labels == unique_labels[i]])
+    sorted_indices = np.argsort(ztop)
+    ztop = ztop[sorted_indices]
+    zbot = zbot[sorted_indices]
+    qc1Ncs_lay = qc1Ncs_lay[sorted_indices]
+    Ic_lay = Ic_lay[sorted_indices]
+    zmid = 0.5*(ztop[1:] + zbot[0:-1])
+    for i in range(len(zmid)):
+        ztop[i+1] = zmid[i]
+        zbot[i] = zmid[i]
     return (ztop, zbot, qc1Ncs_lay, Ic_lay)
 
 
@@ -496,3 +485,102 @@ def get_qc1N_qc1Ncs(qt, fs, sigmav, sigmavp, FC, pa = 101.325, maxiter = 30):
         R = np.minimum(np.abs(R1), np.abs(R2))
         I += 1
     return qc1N, qc1Ncs
+
+def get_pfs(Ic):
+    '''
+    Inputs:
+    Ic = Soil behavior type index. Numpy array.
+
+    Output:
+    pfs = Probability factor for susceptibility. Numpy array.
+    '''
+    pfs = 1.0 - 1.0 / (1.0 + np.exp(-1.702 * (Ic / 2.635 - 1.0) / 0.115))
+    return pfs
+
+def box_cox(x, lam):
+    x_hat = (x**lam - 1.0) / lam
+    return x_hat
+
+def inv_box_cox(x_hat, lam):
+    x = (x_hat * lam + 1.0) ** (1 / lam)
+    return x
+
+def get_crr_hat(qc1Ncs):
+    '''
+    Inputs:
+    qc1Ncs = Overburden and fines corrected cone tip resistance. Numpy array.
+
+    Outputs: 
+    crr_hat = Box-Cox transformed cyclic resistance ratio
+    '''
+    dr = 47.8 * qc1Ncs ** 0.264 - 106.3
+    dr[dr < 0.0] = 0.0
+    dr[dr > 100.0] = 100.0
+    lambda_dr = 1.226
+    dr_hat = (dr ** lambda_dr - 1.0) / lambda_dr
+    crr_hat = -5.420 + 0.0193 * dr_hat
+    return crr_hat
+
+def get_csrm(amax, m, sigmav, sigmavp, z, qc1Ncs, pa=101.325):
+    '''
+    Inputs:
+    amax = Peak horizontal acceleration in g. Numpy array.
+    m = Moment magnitude. Numpy array.
+    sigmav = vertical total stress in same units as pa. Default kPa. Numpy array.
+    sigmavp = vertical effective stress in same units as pa. Default kPa. Numpy array.
+    z = depth in meters. Numpy array.
+    pa = Atmospheric pressure. Scalar valued float. Default = 101.325 kPa.
+
+    Output:
+    csrm_hat = Box-Cox transformed cyclic stress ratio, corrected for magnitude and overburden. Numpy array.
+    '''
+    alpha = np.exp(-4.373 + 0.4491 * m)
+    beta = -20.11 + 6.247 * m
+    rd = (1.0 - alpha) * np.exp(-z / beta) + alpha
+    neq = np.exp(0.4605 - 0.4082 * np.log(amax) + 0.2332 * m)
+    msf = (14 / neq) ** 0.2
+    dr = 47.8 * qc1Ncs ** 0.264 - 106.3
+    dr[dr < 0.0] = 0.0
+    dr[dr > 100.0] = 100.0
+    ksigma = (sigmavp / pa) ** (-0.0015 * dr)
+    ksigma[ksigma > 1.2] = 1.2
+    csrm = 0.65 * amax * sigmav / sigmavp * rd / msf / ksigma
+    return csrm
+
+def get_pfts(csrm_hat, crr_hat):
+    '''
+    Inputs:
+    csrm_hat = Box-Cox transformed cyclic stress ratio, corrected for magnitude and overburden. Numpy array.
+    crr_hat = Box-Cox transformed cyclic resistance ratio.
+
+    Outputs:
+    pfts = Probability factor for triggering conditional on susceptibility.
+    '''
+    pfts = 1.0 / (1.0 + np.exp(-1.701 * (csrm_hat - crr_hat) / 0.842))
+    return pfts
+    
+def get_pfmt(ztop, Ic):
+    '''
+    Inputs:
+    ztop = Depth to top of layer in meters. Numpy array.
+    Ic = Soil behavior type index. Numpy array.
+
+    Output:
+    pfmt = Probability factor for manifestation condtional on triggering. Numpy array.
+    '''
+    pfmt = 1.0 / (1.0 + np.exp(-(7.613 - 0.338 * ztop - 3.042 * Ic)))
+    return pfmt
+
+def get_pmp(pfmt, pfts, pfs, Ksat, t, tc):
+    '''
+    Inputs:
+    pfmt = Probability factor for manifestation condtional on triggering. Numpy array.
+    pfts = Probability factor for triggering condtional on susceptibility. Numpy array.
+    pfs = Probability factor for susceptibility. Numpy array.
+    Ksat = Saturation correction factor. Numpy array.
+
+    Output:
+    pmp = Probability of profile manifestation.
+    '''
+    pmp = 1.0 - np.prod((1.0 - pfmt * pfts * pfs * Ksat) ** (t / tc))
+    return pmp
