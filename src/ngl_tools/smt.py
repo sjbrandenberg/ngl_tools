@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.metrics.pairwise import pairwise_distances
 from sklearn.cluster import AgglomerativeClustering
 
-def cpt_inverse_filter(**kwargs):
+def cpt_inverse_filter(qt, depth, **kwargs):
     """
     This function implements the thin-layer correction algorithm by Boulanger and DeJong (2018) to inverse-filter cone penetration test data to
     account for the effects of layerin on measured CPT resistance.
@@ -37,20 +37,15 @@ def cpt_inverse_filter(**kwargs):
     method 'def convolve(qt, zprime, C1, C2, z50ref, m50, mq, mz)' convolves qt with the filter, and returns a vector of filtered qt values. zprime, C1, and C2 are pre-computed in "layer_correct" to save time.
     method 'get_Ic_Q_Fr(qt, fs, sigmav, sigmavp, pa=101.325, maxiter=30)' returns soil behavior type index, dimensionless cone tip resistance, and dimensionless sleeve friction.
     """
-    if('qt' not in kwargs or 'z' not in kwargs):
-        print('You must specify qt and z')
-        return
     if('fs' in kwargs and ('sigmav' not in kwargs or 'sigmavp' not in kwargs)):
         print('If you include fs, you must also include sigmav and sigmavp')
         return
-    valid_kwargs = ['qt', 'z', 'fs', 'sigmav', 'sigmavp', 'pa', 'z50ref', 'm50', 'mq', 'mz', 'dc', 'niter', 'remove_interface',
+    valid_kwargs = ['fs', 'sigmav', 'sigmavp', 'pa', 'z50ref', 'm50', 'mq', 'mz', 'dc', 'niter', 'remove_interface',
                     'rate_lim', 'smooth', 'tol', 'low_pass']
     for kwarg in kwargs:
         if(kwarg not in valid_kwargs):
             print('WARNING: You sepcified ' + kwarg + ', which is not a valid option. It has no influence on the calculation')
 
-    qt = kwargs.get('qt')
-    z = kwargs.get('z')
     pa = kwargs.get('pa', 101.325)
     z50ref = kwargs.get('z50ref', 4.2)
     m50 = kwargs.get('m50', 0.5)
@@ -63,14 +58,13 @@ def cpt_inverse_filter(**kwargs):
     smooth = kwargs.get('smooth', True)
     tol = kwargs.get('tol', 1.e-6)
     low_pass = kwargs.get('low_pass', True)
-
     qt[qt<0.01] = 0.01
-    dz = (np.max(z)-np.min(z))/len(z)
-    zprime = (z[:, np.newaxis] - z) / dc
+    dz = (np.max(depth)-np.min(depth))/len(depth)
+    zprime = (depth[:, np.newaxis] - depth) / dc
     C1 = 1 + zprime / 8.0
     C1[zprime > 0] = 1.0
     C1[zprime < -4] = 0.5
-    C2 = np.ones((len(z), len(z)))
+    C2 = np.ones((len(depth), len(depth)))
     C2[zprime < 0] = 0.8
     qtrial_con = convolve(qt, zprime, C1, C2, z50ref, m50, mq, mz)
     qtrial = np.maximum(0.5*qt, 2*qt - qtrial_con)
@@ -93,7 +87,7 @@ def cpt_inverse_filter(**kwargs):
         qtrial = convolve(qtrial,zprime,C1, C2, 0.866,m50,mq,mz)
             
     if remove_interface==True:
-        qtrial = remove_interface_function(qtrial,z,rate_lim,dc)
+        qtrial = remove_interface_function(qtrial,depth,rate_lim,dc)
     
     #apply fs correction
     if 'fs' in kwargs:
@@ -112,7 +106,7 @@ def cpt_inverse_filter(**kwargs):
         fs_inv[fs_inv < 0.01] = 0.01
         return qtrial, fs_inv, Ic_inv
             
-    return z,qtrial
+    return qtrial
 
 def convolve(qt, zprime, C1, C2, z50ref, m50, mq, mz):
     """
@@ -133,28 +127,38 @@ def convolve(qt, zprime, C1, C2, z50ref, m50, mq, mz):
     outputs:
     qt_convolved = Numpy array of convolved cone tip resistance values.
     """
-
     qt[qt<0.01] = 0.01
     qt_ratio = qt / qt[:, np.newaxis]
     w2 = np.zeros(zprime.shape, dtype=float)
-    filt = np.abs(zprime) < 30
-    w2[filt] = np.sqrt(2.0 / (1.0 + qt_ratio[filt]**-mq))
+    w2 = np.sqrt(2.0 / (1.0 + (1.0/qt_ratio)**mq))
     zprime_50 = np.zeros(zprime.shape, dtype=float)
-    zprime_50[filt] = 1.0 + 2.0 * (C2[filt] * z50ref - 1.0)*(1.0 - 1.0 / (1.0 + qt_ratio[filt]**m50))
+    zprime_50 = 1.0 + 2.0 * (C2 * z50ref - 1.0)*(1.0 - 1.0 / (1.0 + qt_ratio**m50))
     w1 = np.zeros(zprime.shape, dtype=float)
-    w1[filt] = C1[filt] / (1 + np.abs(zprime[filt] / zprime_50[filt])**mz)
+    w1 = C1 / (1 + np.abs(zprime / zprime_50)**mz)
     wc = w1 * w2 / np.sum(w1 * w2, axis=0)
     qt_convolved = np.sum(qt*wc.T, axis=1)
     return qt_convolved
+    # qt[qt<0.01] = 0.01
+    # qt_ratio = qt / qt[:, np.newaxis]
+    # w2 = np.zeros(zprime.shape, dtype=float)
+    # filt = np.abs(zprime) < 100000
+    # w2[filt] = np.sqrt(2.0 / (1.0 + (1.0/qt_ratio[filt])**mq))
+    # zprime_50 = np.zeros(zprime.shape, dtype=float)
+    # zprime_50[filt] = 1.0 + 2.0 * (C2[filt] * z50ref - 1.0)*(1.0 - 1.0 / (1.0 + qt_ratio[filt]**m50))
+    # w1 = np.zeros(zprime.shape, dtype=float)
+    # w1[filt] = C1[filt] / (1 + np.abs(zprime[filt] / zprime_50[filt])**mz)
+    # wc = w1 * w2 / np.sum(w1 * w2, axis=0)
+    # qt_convolved = np.sum(qt*wc.T, axis=1)
+    # return qt_convolved
 
-def remove_interface_function(qtrial, z, rate_lim, dc):
+def remove_interface_function(qtrial, depth, rate_lim, dc):
     """
     This function identifies layer interfaces and transition zones and sharpens the cone profile following
     the procedure described by Boulanger and DeJong (2018).  This function is called by cpt_inverse_filter().
     
     inputs:
     qtrial = Numpy array of trial values of cone tip resistance obtained by convolution.
-    z = Numpy array of depth values.
+    depth = Numpy array of depth values.
     rate_lim = Scalar valued limiting rate of change of the log of cone tip resistance for identifying a transition zone.
     dc = Scalar valued cone diameter.
 
@@ -163,7 +167,7 @@ def remove_interface_function(qtrial, z, rate_lim, dc):
     """
     m = []
     q_corrected = np.copy(qtrial)
-    dz = (np.max(z)-np.min(z))/(len(z)-1)
+    dz = (np.max(depth)-np.min(depth))/(len(depth)-1)
     InTZ = False
     load_dir = 0
     for i in range(len(qtrial)-1):
@@ -183,9 +187,9 @@ def remove_interface_function(qtrial, z, rate_lim, dc):
             ind2 = i
             if np.max(m[ind1:ind2]) < rate_lim:
                 continue
-            if (z[ind2]-z[ind1])/dc > 3:
+            if (depth[ind2]-depth[ind1])/dc > 3:
                 ind3 = int(0.5*(ind1 + ind2))
-                if (z[ind2]-z[ind1])/dc > 12:
+                if (depth[ind2]-depth[ind1])/dc > 12:
                     ind1 = np.max([ind3 - int(6*dc/dz),0])
                     ind2 = np.min([ind3 + int(6*dc/dz),len(qtrial)-1])
                 for j in np.arange(ind1,ind2):
@@ -200,9 +204,9 @@ def remove_interface_function(qtrial, z, rate_lim, dc):
             ind2 = i
             if -1.0*np.min(m[ind1:ind2]) < rate_lim:
                 continue
-            if (z[ind2]-z[ind1])/dc > 3:
+            if (depth[ind2]-depth[ind1])/dc > 3:
                 ind3 = int(0.5*(ind1 + ind2))
-                if (z[ind2]-z[ind1])/dc > 18:
+                if (depth[ind2]-depth[ind1])/dc > 18:
                     ind1 = np.max([ind3 - int(9*dc/dz),0])
                     ind2 = np.min([ind3 + int(9*dc/dz),len(qtrial)-1])
                 for j in np.arange(ind1,ind2):
@@ -227,7 +231,7 @@ def smooth_function(y, span):
     if span % 2 == 0:
         span = span - 1
     smooth_y = np.empty(len(y))
-    for i, yval in enumerate(y):
+    for i in range(len(y)):
         sub_span = int(np.min([i,(span-1)/2,len(y)-i]))
         smooth_y[i] = np.mean(y[i-sub_span:i+sub_span+1])
     return smooth_y 
@@ -258,7 +262,6 @@ def cpt_layering(qc1Ncs, Ic, depth, **kwargs):
     Ic_lay = Numpy array of soil behavior type index values for the layers.
     """
     ##Read keyword arguments
-    dGWT = kwargs.get('dGWT', 0.0)
     Nmin = kwargs.get('Nmin', 1)
     Nmax = kwargs.get('Nmax', None)
     tref = kwargs.get('tref', 0.5)
@@ -271,9 +274,6 @@ def cpt_layering(qc1Ncs, Ic, depth, **kwargs):
 
     ##Create nearest-neighbor matrix (tri-diagonal ones, zeros elsewhere)
     X = np.concatenate((qc1Ncs_norm.reshape(-1, 1).T, Ic_norm.reshape(-1, 1).T)).T
-    ind = np.argmin(
-        np.abs(dGWT - depth)
-    )  ##force a layer break at the groundwater table depth
     knn_graph = np.zeros((len(depth), len(depth)))
     for i in range(len(depth)):
         knn_graph[i][i] = 1.0
@@ -346,7 +346,7 @@ def cpt_layering(qc1Ncs, Ic, depth, **kwargs):
     return (ztop, zbot, qc1Ncs_lay, Ic_lay)
 
 
-def get_FC_from_Ic(Ic, epsilon):
+def get_FC_from_Ic(Ic, epsilon = 0.0):
     """
     This function computes fines content from soil behavior type index following the method by Hudson et al. (2024).
 
@@ -366,9 +366,9 @@ def get_FC_from_Ic(Ic, epsilon):
     return FC
 
 ##Function for computing qc1Ncs and Ic
-def get_Ic_Qtn_Fr(qt, fs, sigmav, sigmavp, pa = 101.25, maxiter = 30):
+def get_Ic_Qtn_Fr(qt, fs, sigmav, sigmavp, pa = 101.325, maxiter = 30):
     """
-    This function computes Ic, Qtn, Fr, qc1N, and qc1Ncs. Iterations are required to solve for
+    This function computes Ic, Qtn, Fr. Iterations are required to solve for
     these parameters because relationships among Ic, Qtn, Fr, qc1N, and qc1Ncs are implicit.
 
     Inputs:
@@ -494,7 +494,7 @@ def get_pfs(Ic):
     Output:
     pfs = Probability factor for susceptibility. Numpy array.
     '''
-    pfs = 1.0 - 1.0 / (1.0 + np.exp(-1.702 * (Ic / 2.635 - 1.0) / 0.115))
+    pfs = 1.0 - 1.0 / (1.0 + np.exp(-14.8 * (Ic / 2.635 - 1.0)))
     return pfs
 
 def box_cox(x, lam):
@@ -521,7 +521,7 @@ def get_crr_hat(qc1Ncs):
     crr_hat = -5.420 + 0.0193 * dr_hat
     return crr_hat
 
-def get_csrm(amax, m, sigmav, sigmavp, z, qc1Ncs, pa=101.325):
+def get_csrm(amax, m, sigmav, sigmavp, depth, qc1Ncs, pa=101.325):
     '''
     Inputs:
     amax = Peak horizontal acceleration in g. Numpy array.
@@ -532,11 +532,11 @@ def get_csrm(amax, m, sigmav, sigmavp, z, qc1Ncs, pa=101.325):
     pa = Atmospheric pressure. Scalar valued float. Default = 101.325 kPa.
 
     Output:
-    csrm_hat = Box-Cox transformed cyclic stress ratio, corrected for magnitude and overburden. Numpy array.
+    csrm = Cyclic stress ratio, corrected for magnitude and overburden. Numpy array.
     '''
     alpha = np.exp(-4.373 + 0.4491 * m)
     beta = -20.11 + 6.247 * m
-    rd = (1.0 - alpha) * np.exp(-z / beta) + alpha
+    rd = (1.0 - alpha) * np.exp(-depth / beta) + alpha
     neq = np.exp(0.4605 - 0.4082 * np.log(amax) + 0.2332 * m)
     msf = (14 / neq) ** 0.2
     dr = 47.8 * qc1Ncs ** 0.264 - 106.3
@@ -556,7 +556,7 @@ def get_pfts(csrm_hat, crr_hat):
     Outputs:
     pfts = Probability factor for triggering conditional on susceptibility.
     '''
-    pfts = 1.0 / (1.0 + np.exp(-1.701 * (csrm_hat - crr_hat) / 0.842))
+    pfts = 1.0 / (1.0 + np.exp(-2.020 * (csrm_hat - crr_hat)))
     return pfts
     
 def get_pfmt(ztop, Ic):
@@ -571,16 +571,18 @@ def get_pfmt(ztop, Ic):
     pfmt = 1.0 / (1.0 + np.exp(-(7.613 - 0.338 * ztop - 3.042 * Ic)))
     return pfmt
 
-def get_pmp(pfmt, pfts, pfs, Ksat, t, tc):
+def get_pmp(pfmt, pfts, pfs, Ksat, t):
     '''
     Inputs:
     pfmt = Probability factor for manifestation condtional on triggering. Numpy array.
     pfts = Probability factor for triggering condtional on susceptibility. Numpy array.
     pfs = Probability factor for susceptibility. Numpy array.
     Ksat = Saturation correction factor. Numpy array.
+    t = Layer thickness in meters
 
     Output:
     pmp = Probability of profile manifestation.
     '''
+    tc = 2.0
     pmp = 1.0 - np.prod((1.0 - pfmt * pfts * pfs * Ksat) ** (t / tc))
     return pmp
