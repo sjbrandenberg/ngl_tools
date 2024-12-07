@@ -722,36 +722,11 @@ def smt_model_fragility(depth, qt, fs, amax, m, pa=101.325, **kwargs):
     Ksat = Saturation factor to multiply probability of triggering. Numpy array[dtype=float].
 
     Output:
-    Ic = Soil behavior type index. Numpy array [dtype=float].
-    qt_inv = Inverse-filtered cone tip resistance. Numpy array [dtype=float].
-    fs_inv = Inverse-filtered sleeve friction. Numpy array [dtype=float].
-    Ic_inv = Inverse-filtered soil behavior type index. Numpy array [dtype=float].
-    FC = Fines content computed from Ic_inv. Numpy array [dtype=float].
-    qc1Ncs = Overburden- and fines-corrected cone tip resistance. Numpy array [dtype=float].
-    ztop = Depth to top of layers. Numpy array [dtype=float].
-    zbot = Depth to bottom of layers. Numpy array [dtype=float].
-    qc1Ncs_lay = Overburden- and fines-corrected cone tip resistance for layers. Numpy array [dtype=float].
-    Ic_lay = Soil behavior type index for layers. Numpy array [dtype=float].
-    Ksat_lay = Ksat value for layers. Numpy array [dtype=float].
-    pfs = Probability factor for susceptibility of layers. Numpy array [dtype=float].
-    pfts = Probability factor for triggering conditioned on susceptibility. Numpy array [dtype=float].
-    pft = Probability factor for triggering of layers. Numpy array [dtype=float].
-    pfmt = Probability factor for manifestation conditioned on triggering. Numpy array [dtype=float].
-    pfm = Probability factor for manifestation of layers. Numpy array [dtype=float].
-    pmp = Probability of profile manifestation. Float
+    pmp = Probability of profile manifestation. Numpy ndarray [dtype=float]
 
     Notes: 
     
-    1. Either dGWT and gamma must be specified, or sigmav and sigmavp must be specified.
-    2. If sigmav, sigmavp, and gamma are specified, gamma will be ignored.
-    3. If sigmav and sigmavp are specified, and dGWT is not specified, dGWT will be
-       inferred as the deepest point where sigmav and sigmavp are equal.
-    4. If Ksat is not specified, it will be assumed equal to 0.0 above dGWT and 1.0 below dGWT.
-    5. All input Numpy arrays must have the same length.
-    6. The following output Numpy arrays have the same length as the input arrays: 
-        qt_inv, fs_inv, Ic_inv, FC, qc1Ncs.
-    7. The following output Numpy arrays have a length equal to the number of layers: 
-        ztop, zbot, qc1Ncs_lay, Ic_lay, Ksat_lay, pfs, pfts, pft, pfmt, pfm
+    1. Dimensions of pmp are len(m), len(amax) 
     '''
     # define constants
     pa = kwargs.get('pa', 101.325)
@@ -810,14 +785,15 @@ def smt_model_fragility(depth, qt, fs, amax, m, pa=101.325, **kwargs):
     # compute probabilities
     crr_hat_lay = get_crr_hat(qc1Ncs_lay)
     crr_lay = inv_box_cox(crr_hat_lay, lambda_csr)
-    csrm_lay = get_csrm(amax[np.newaxis, :, np.newaxis], m[np.newaxis, np.newaxis, :], sigmav_lay, sigmavp_lay, 0.5 * (ztop + zbot), qc1Ncs_lay)
+    csrm_lay = get_csrm(amax[np.newaxis, np.newaxis, :], m[np.newaxis, :, np.newaxis], sigmav_lay[:, np.newaxis, np.newaxis], sigmavp_lay[:, np.newaxis, np.newaxis], 0.5 * (ztop[:, np.newaxis, np.newaxis] + zbot[:, np.newaxis, np.newaxis]), qc1Ncs_lay[:, np.newaxis, np.newaxis])
     csrm_hat_lay = box_cox(csrm_lay, lambda_csr)
     t = zbot - ztop
     pfs = get_pfs(Ic_lay)
     pfts = get_pfts(csrm_hat_lay, crr_hat_lay[:,np.newaxis,np.newaxis], Ksat_lay[:, np.newaxis, np.newaxis])
-    pft = pfs * pfts
+    pft = pfs[:, np.newaxis, np.newaxis] * pfts
     pfmt = get_pfmt(ztop, Ic_lay)
-    pfm = pfs * pfts * pfmt
-    pmp = get_pmp(pfmt, pfts[:,np.newaxis, np.newaxis], pfs[:, np.newaxis, np.newaxis], t)
+    pfm = pft * pfmt[:, np.newaxis, np.newaxis]
+    tc = 2.0
+    pmp = 1.0 - np.prod((1.0 - pfmt[:, np.newaxis, np.newaxis] * pfts * pfs[:, np.newaxis, np.newaxis]) ** (t[:, np.newaxis, np.newaxis] / tc), axis=0)
     return pmp
     
