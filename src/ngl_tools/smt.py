@@ -17,8 +17,8 @@ def cpt_inverse_filter(qt, depth, **kwargs):
     <low_pass=True/False>)
 
     qt = Numpy array of cone tip resistance values.
+    depth = Numpy array of depth values.
     fs = Nump array of cone sleeve friction values.
-    z = Numpy array of depth values.
     sigmav = Numpy array of initial vertical total stress values.
     sigmavp = Numpy array of initial vertical effective stress values.
     z50ref = Scalar dimensionless depth filter parameter. Default = 4.2.
@@ -387,7 +387,6 @@ def get_Ic_Qtn_Fr(qt, fs, sigmav, sigmavp, pa = 101.325, maxiter = 30):
     Ic = Numpy array of soil behavior type index values. Ic = np.sqrt((3.47 - np.log10(Qtn)) ** 2 + (np.log10(Fr) + 1.22) ** 2)
     Qtn = Numpy array of dimensionless cone tip resistance values. Qtn = (qt - sigmav) / pa * (pa / sigmavp) ** n >= 0.0001
     Fr = Numpy array of dimensionless cone sleeve friction values. Fr = fs / (qt - sigmav) * 100 >= 0.001
-    qc1N = 
     """
     
     # Set zero values to small numbers for numerical stability
@@ -515,7 +514,7 @@ def get_crr_hat(qc1Ncs):
     '''
     dr = 47.8 * qc1Ncs ** 0.264 - 106.3
     dr[dr < 0.0] = 0.0
-    dr[dr > 100.0] = 100.0
+    dr[dr > 132.0] = 132.0
     lambda_dr = 1.226
     dr_hat = (dr ** lambda_dr - 1.0) / lambda_dr
     crr_hat = -5.420 + 0.0193 * dr_hat
@@ -547,7 +546,7 @@ def get_csrm(amax, m, sigmav, sigmavp, depth, qc1Ncs, pa=101.325):
     csrm = 0.65 * amax * sigmav / sigmavp * rd / msf / ksigma
     return csrm
 
-def get_pfts(csrm_hat, crr_hat):
+def get_pfts(csrm_hat, crr_hat, Ksat):
     '''
     Inputs:
     csrm_hat = Box-Cox transformed cyclic stress ratio, corrected for magnitude and overburden. Numpy array.
@@ -556,7 +555,7 @@ def get_pfts(csrm_hat, crr_hat):
     Outputs:
     pfts = Probability factor for triggering conditional on susceptibility.
     '''
-    pfts = 1.0 / (1.0 + np.exp(-2.020 * (csrm_hat - crr_hat)))
+    pfts = Ksat / (1.0 + np.exp(-2.020 * (csrm_hat - crr_hat)))
     return pfts
     
 def get_pfmt(ztop, Ic):
@@ -571,7 +570,7 @@ def get_pfmt(ztop, Ic):
     pfmt = 1.0 / (1.0 + np.exp(-(7.613 - 0.338 * ztop - 3.042 * Ic)))
     return pfmt
 
-def get_pmp(pfmt, pfts, pfs, Ksat, t):
+def get_pmp(pfmt, pfts, pfs, t):
     '''
     Inputs:
     pfmt = Probability factor for manifestation condtional on triggering. Numpy array.
@@ -584,5 +583,123 @@ def get_pmp(pfmt, pfts, pfs, Ksat, t):
     pmp = Probability of profile manifestation.
     '''
     tc = 2.0
-    pmp = 1.0 - np.prod((1.0 - pfmt * pfts * pfs * Ksat) ** (t / tc))
+    pmp = 1.0 - np.prod((1.0 - pfmt * pfts * pfs) ** (t / tc))
     return pmp
+
+def smt_model(depth, qt, fs, amax, m, pa=101.325, **kwargs):
+    '''
+    Inputs:
+    depth = Depth values. Numpy array.
+    qt = Cone tip resistance values in same units as pa. Numpy array [dtype=float].
+    fs = Cone sleeve friction values in same units as pa. Numpy array [dtype=float].
+    amax = Maximum horizontal surface acceleration in g. Float.
+    m = Earthquake magnitude. Float.
+    pa = Atmospheric pressure. Float. Optional. Default = 101.325 kPa.
+
+    Keyword Arguments (kwargs):
+    gamma = Total unit weight of soil. Float.
+    dGWT = Depth to groundwater table. Float.
+    gammaw = Unit weight of water. Float. Optional. Default = 9.81 kN/m^3.
+    sigmav = Vertical total stress in same units as pa. Numpy array [dtype=float].
+    sigmavp = Vertical effective stress in same units as pa. Numpy array [dtype=float].
+    Ksat = Saturation factor to multiply probability of triggering. Numpy array[dtype=float].
+
+    Output:
+    qt_inv = Inverse-filtered cone tip resistance. Numpy array [dtype=float].
+    fs_inv = Inverse-filtered sleeve friction. Numpy array [dtype=float].
+    Ic_inv = Inverse-filtered soil behavior type index. Numpy array [dtype=float].
+    FC = Fines content computed from Ic_inv. Numpy array [dtype=float].
+    qc1Ncs = Overburden- and fines-corrected cone tip resistance. Numpy array [dtype=float].
+    ztop = Depth to top of layers. Numpy array [dtype=float].
+    zbot = Depth to bottom of layers. Numpy array [dtype=float].
+    qc1Ncs_lay = Overburden- and fines-corrected cone tip resistance for layers. Numpy array [dtype=float].
+    Ic_lay = Soil behavior type index for layers. Numpy array [dtype=float].
+    Ksat_lay = Ksat value for layers. Numpy array [dtype=float].
+    pfs = Probability factor for susceptibility of layers. Numpy array [dtype=float].
+    pfts = Probability factor for triggering conditioned on susceptibility. Numpy array [dtype=float].
+    pft = Probability factor for triggering of layers. Numpy array [dtype=float].
+    pfmt = Probability factor for manifestation conditioned on triggering. Numpy array [dtype=float].
+    pfm = Probability factor for manifestation of layers. Numpy array [dtype=float].
+    pmp = Probability of profile manifestation. Float
+
+    Notes: 
+    
+    1. Either dGWT and gamma must be specified, or sigmav and sigmavp must be specified.
+    2. If sigmav, sigmavp, and gamma are specified, gamma will be ignored.
+    3. If sigmav and sigmavp are specified, and dGWT is not specified, dGWT will be
+       inferred as the deepest point where sigmav and sigmavp are equal.
+    4. If Ksat is not specified, it will be assumed equal to 0.0 above dGWT and 1.0 below dGWT.
+    5. All input Numpy arrays must have the same length.
+    6. The following output Numpy arrays have the same length as the input arrays: 
+        qt_inv, fs_inv, Ic_inv, FC, qc1Ncs.
+    7. The following output Numpy arrays have a length equal to the number of layers: 
+        ztop, zbot, qc1Ncs_lay, Ic_lay, Ksat_lay, pfs, pfts, pft, pfmt, pfm
+    '''
+    # define constants
+    pa = kwargs.get('pa', 101.325)
+    lambda_csr = -0.361
+    lambda_dr = 1.226
+
+    # Read kwargs
+    if(not (all(elem in kwargs for elem in ['dGWT', 'gamma']) or all(elem in kwargs for elem in ['sigmav', 'sigmavp']))):
+        return "You must specify either dGWT and gamma, or sigmav and sigmavp."
+    gammaw = kwargs.get('gammaw', 9.81)
+    if('dGWT' in kwargs):
+        dGWT = kwargs['dGWT']
+        u = gammaw * (depth - dGWT)
+        u[u<0.0] = 0.0
+        gamma = kwargs['gamma']
+        sigmav = gamma * depth
+        sigmavp = sigmav - u
+    if('sigmav' in kwargs):
+        sigmav = kwargs.get('sigmav')
+        sigmavp = kwargs.get('sigmavp')
+        if('dGWT' in kwargs):
+            dGWT = kwargs['dGWT']
+        else:
+            dGWT = depth[sigmav == sigmavp][-1]
+    if('Ksat' in kwargs):
+        Ksat = kwargs['Ksat']
+    else:
+        Ksat = np.zeros(len(depth))
+        Ksat[depth > dGWT] = 1.0
+    
+    # apply inverse-filter algorithm
+    qt_inv, fs_inv, Ic_inv = cpt_inverse_filter(qt, depth, fs=fs, sigmav=sigmav, sigmavp=sigmavp, low_pass=True, smooth=True, remove_interface=True)
+    Ic, Qtn, Fr = get_Ic_Qtn_Fr(qt, fs, sigmav, sigmavp)
+    Ic_inv, Qtn_inv, Fr_inv = get_Ic_Qtn_Fr(qt_inv, fs_inv, sigmav, sigmavp)
+
+    # Compute fines content and overburden- and fines-corrected tip resistance
+    FC = get_FC_from_Ic(Ic_inv, 0.0)
+    qc1N, qc1Ncs = get_qc1N_qc1Ncs(qt, fs, sigmav, sigmavp, FC)
+    qc1N_inv, qc1Ncs_inv = get_qc1N_qc1Ncs(qt_inv, fs_inv, sigmav, sigmavp, FC)
+    
+    # apply layering algorithm
+    ztop, zbot, qc1Ncs_lay, Ic_lay = cpt_layering(qc1Ncs_inv, Ic_inv, depth, dGWT=dGWT, Nmin=1, Nmax=None)
+    
+    # insert layer break at groundwater table depth if needed
+    if((dGWT not in ztop) and (dGWT not in zbot) and (dGWT > np.min(ztop)) and (dGWT < np.max(zbot))):
+        Ic_dGWT = Ic_lay[ztop<dGWT][-1]
+        qc1Ncs_dGWT = qc1Ncs_lay[ztop<dGWT][-1]
+        Ic_lay = np.hstack((Ic_lay[zbot<dGWT], Ic_dGWT, Ic_lay[zbot>dGWT]))
+        qc1Ncs_lay = np.hstack((qc1Ncs_lay[zbot<dGWT], qc1Ncs_dGWT, qc1Ncs_lay[zbot>dGWT]))
+        ztop = np.hstack((ztop[ztop<dGWT], dGWT, ztop[ztop>dGWT]))
+        zbot = np.hstack((zbot[zbot<dGWT], dGWT, zbot[zbot>dGWT]))
+    sigmav_lay = np.interp(0.5 * (ztop + zbot), depth, sigmav)
+    sigmavp_lay = np.interp(0.5 * (ztop + zbot), depth, sigmavp)
+    Ksat_lay = np.interp(0.5 * (ztop + zbot), depth, Ksat)
+
+    # compute probabilities
+    crr_hat_lay = get_crr_hat(qc1Ncs_lay)
+    crr_lay = inv_box_cox(crr_hat_lay, lambda_csr)
+    csrm_lay = get_csrm(amax, m, sigmav_lay, sigmavp_lay, 0.5 * (ztop + zbot), qc1Ncs_lay)
+    csrm_hat_lay = box_cox(csrm_lay, lambda_csr)
+    t = zbot - ztop
+    pfs = get_pfs(Ic_lay)
+    pfts = get_pfts(csrm_hat_lay, crr_hat_lay, Ksat_lay)
+    pft = pfs * pfts
+    pfmt = get_pfmt(ztop, Ic_lay)
+    pfm = pfs * pfts * pfmt
+    pmp = get_pmp(pfmt, pfts, pfs, t)
+    return (qt_inv, fs_inv, Ic_inv, FC, qc1Ncs, ztop, zbot, qc1Ncs_lay, Ic_lay, Ksat_lay, pfs, pfts, pft, pfmt, pfm, pmp)
+    
