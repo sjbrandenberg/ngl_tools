@@ -332,8 +332,8 @@ def cpt_layering(qc1Ncs, Ic, depth, **kwargs):
     for i in range(n_clusters):
         ztop[i] = depth[labels == unique_labels[i]][0]
         zbot[i] = depth[labels == unique_labels[i]][-1]
-        qc1Ncs_lay[i] = np.mean(qc1Ncs[labels == unique_labels[i]])
-        Ic_lay[i] = np.mean(Ic[labels == unique_labels[i]])
+        qc1Ncs_lay[i] = np.median(qc1Ncs[labels == unique_labels[i]])
+        Ic_lay[i] = np.median(Ic[labels == unique_labels[i]])
     sorted_indices = np.argsort(ztop)
     ztop = ztop[sorted_indices]
     zbot = zbot[sorted_indices]
