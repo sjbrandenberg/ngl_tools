@@ -646,18 +646,17 @@ def smt_model(depth, qt, fs, amax, m, pa=101.325, **kwargs):
     gammaw = kwargs.get('gammaw', 9.81)
     if('dGWT' in kwargs):
         dGWT = kwargs['dGWT']
-        u = gammaw * (depth - dGWT)
-        u[u<0.0] = 0.0
+    if('sigmav' in kwargs):
+        sigmav = kwargs['sigmav']
+        sigmavp = kwargs['sigmavp']
+        if('dGWT' not in kwargs):
+            dGWT = depth[sigmav == sigmavp][-1]
+    if('sigmav' not in kwargs):
         gamma = kwargs['gamma']
         sigmav = gamma * depth
+        u = gammaw * (depth - dGWT)
+        u[u<0.0] = 0.0
         sigmavp = sigmav - u
-    if('sigmav' in kwargs):
-        sigmav = kwargs.get('sigmav')
-        sigmavp = kwargs.get('sigmavp')
-        if('dGWT' in kwargs):
-            dGWT = kwargs['dGWT']
-        else:
-            dGWT = depth[sigmav == sigmavp][-1]
     if('Ksat' in kwargs):
         Ksat = kwargs['Ksat']
     else:
@@ -739,18 +738,17 @@ def smt_model_fragility(depth, qt, fs, amax, m, pa=101.325, **kwargs):
     gammaw = kwargs.get('gammaw', 9.81)
     if('dGWT' in kwargs):
         dGWT = kwargs['dGWT']
-        u = gammaw * (depth - dGWT)
-        u[u<0.0] = 0.0
+    if('sigmav' in kwargs):
+        sigmav = kwargs['sigmav']
+        sigmavp = kwargs['sigmavp']
+        if('dGWT' not in kwargs):
+            dGWT = depth[sigmav == sigmavp][-1]
+    if('sigmav' not in kwargs):
         gamma = kwargs['gamma']
         sigmav = gamma * depth
+        u = gammaw * (depth - dGWT)
+        u[u<0.0] = 0.0
         sigmavp = sigmav - u
-    if('sigmav' in kwargs):
-        sigmav = kwargs.get('sigmav')
-        sigmavp = kwargs.get('sigmavp')
-        if('dGWT' in kwargs):
-            dGWT = kwargs['dGWT']
-        else:
-            dGWT = depth[sigmav == sigmavp][-1]
     if('Ksat' in kwargs):
         Ksat = kwargs['Ksat']
     else:
