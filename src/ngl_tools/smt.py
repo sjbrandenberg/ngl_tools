@@ -390,7 +390,7 @@ def get_Ic_Qtn_Fr(qt, fs, sigmav, sigmavp, pa = 101.325, maxiter = 30):
     """
     
     # Set zero values to small numbers for numerical stability
-    qt[qt<=0] = 0.001 * pa
+    qt[qt<=sigmav] = sigmav[qt<=sigmav] + 0.001 * pa
     fs[fs<=0] = 0.001 * pa
     sigmav[sigmav<=0] = 0.001 * pa
     sigmavp[sigmavp<=0] = 0.001*pa
