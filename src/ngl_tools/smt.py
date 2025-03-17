@@ -254,6 +254,7 @@ def cpt_layering(qc1Ncs, Ic, depth, **kwargs):
     tref = Scalar valued constant used to define layer thickness parameter in cost function. Optional. Default = 0.5.
     wD = Scalar valued weight factor for distortion score portion of cost function. Optional. Default = 1.0.
     wT = Scalar valued weight factor for layer thickness portion of cost function. Optional. Default = 1.0.
+    averaging = Integer indicator of whether to use the median (0) or mean (1) of qc1Ncs and Ic in each layer. Optional. Default = 0.
     
     Outputs:
     ztop = Numpy array of depths to the tops of the layers.
@@ -267,7 +268,11 @@ def cpt_layering(qc1Ncs, Ic, depth, **kwargs):
     tref = kwargs.get('tref', 0.5)
     wD = kwargs.get('wD', 1)
     wT = kwargs.get('wT', 1)
-
+    averaging = kwargs.get('averaging', 0)
+    # If user specifies invalid value for averaging, default to median
+    if((averaging != 0) & (averaging != 1)):
+        averaging = 0
+    
     ##Standardize (normalize, "norm") the qc1Ncs and Ic values
     qc1Ncs_norm = (qc1Ncs - np.mean(qc1Ncs)) / np.std(qc1Ncs)
     Ic_norm = (Ic - np.mean(Ic)) / np.std(Ic)
@@ -332,8 +337,12 @@ def cpt_layering(qc1Ncs, Ic, depth, **kwargs):
     for i in range(n_clusters):
         ztop[i] = depth[labels == unique_labels[i]][0]
         zbot[i] = depth[labels == unique_labels[i]][-1]
-        qc1Ncs_lay[i] = np.median(qc1Ncs[labels == unique_labels[i]])
-        Ic_lay[i] = np.median(Ic[labels == unique_labels[i]])
+        if(averaging == 1):
+            qc1Ncs_lay[i] = np.mean(qc1Ncs[labels == unique_labels[i]])
+            Ic_lay[i] = np.mean(Ic[labels == unique_labels[i]])
+        else:                            
+            qc1Ncs_lay[i] = np.median(qc1Ncs[labels == unique_labels[i]])
+            Ic_lay[i] = np.median(Ic[labels == unique_labels[i]])
     sorted_indices = np.argsort(ztop)
     ztop = ztop[sorted_indices]
     zbot = zbot[sorted_indices]
