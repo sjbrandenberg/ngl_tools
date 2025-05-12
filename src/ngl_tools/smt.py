@@ -663,6 +663,8 @@ def smt_model(depth, qt, fs, amax, m, pa=101.325, **kwargs):
     if('sigmav' not in kwargs):
         gamma = kwargs['gamma']
         sigmav = gamma * depth
+        if(dGWT < 0):
+            sigmav += -gammaw * dGWT
         u = gammaw * (depth - dGWT)
         u[u<0.0] = 0.0
         sigmavp = sigmav - u
