@@ -663,8 +663,9 @@ def smt_model(depth, qt, fs, amax, m, pa=101.325, **kwargs):
     if('sigmav' not in kwargs):
         gamma = kwargs['gamma']
         sigmav = gamma * depth
+        # adjust groundwater depth so total stress contains only soil contribution (for tau_max) and effective stress is correct
         if(dGWT < 0):
-            sigmav += -gammaw * dGWT
+            dGWT = 0
         u = gammaw * (depth - dGWT)
         u[u<0.0] = 0.0
         sigmavp = sigmav - u
